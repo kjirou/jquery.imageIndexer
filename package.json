@@ -1,0 +1,17 @@
+{
+  "name": "jquery.imageIndexer",
+  "description": "",
+  "version": "1.0.0",
+  "author": "kjirou",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "grunt": "*",
+    "grunt-contrib-clean": "*",
+    "grunt-contrib-coffee": "*",
+    "grunt-contrib-concat": "*",
+    "grunt-contrib-watch": "*",
+    "mocha": "*",
+    "expect.js": "*"
+  }
+}
