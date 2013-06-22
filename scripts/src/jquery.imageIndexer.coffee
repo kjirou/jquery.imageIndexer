@@ -1,16 +1,36 @@
 do ($=jQuery) ->
+
   if $.imageIndexer?
     return
 
-  # @TODO エラーの出し方を Coffeeを使って & モダンブラウザ限定で 洗練したい
 
-  # @TODO 引数無しは Singleton で ImageIndexer オブジェクトを返す
-  # @TODO $.imageIndexer('key') で名前付きオブジェクトを返す
-  # @TODO $.imageIndexer.xxx() にショートカット登録
-  $.imageIndexer = () ->
-    null
+  $.imageIndexer = (instanceKey) ->
+    ImageIndexer.getInstance(instanceKey)
+
+  $.imageIndexer._addShortcut = (methodName) ->
+    @[methodName] = () ->
+      ins = ImageIndexer.getInstance()
+      ins[methodName].apply(ins, arguments)
+
+  $.imageIndexer._addShortcut('clip')
+  $.imageIndexer._addShortcut('upload')
+  $.imageIndexer._addShortcut('partition')
+
+  $.imageIndexer.getClass = () ->
+    ImageIndexer
+
 
   class ImageIndexer
+
+    # @TODO エラーの出し方を Coffeeを使って & モダンブラウザ限定で 洗練したい
+
+    @_instances = {}
+
+    @getInstance = (instanceKey='default') ->
+      if instanceKey of @_instances
+        @_instances[instanceKey]
+      else
+        @_instances[instanceKey] = new ImageIndexer()
 
     constructor: () ->
   #      '<任意のキー>': {
@@ -50,10 +70,10 @@ do ($=jQuery) ->
 #            throw new Error('RPGMaterial:ImageIndexer.upload, can\'t be devided');
 #        };
 
-      unless @_isFullSize内に収まっている()
+      if not @_isFullSize内に収まっている()
         null
 
-      unless @_isSizeがpartSizeで割り切れる()
+      if not @_isSizeがpartSizeで割り切れる()
         null
 
       @_images[imageKey] = {
@@ -75,6 +95,8 @@ do ($=jQuery) ->
 
     _hasImageData: (imageKey) ->
       @_getImage(imageKey) isnt null
+
+    _withinSize: (parentSize, pos, size) ->
 
     asChip: (imageKey, indexInfo...) ->
 

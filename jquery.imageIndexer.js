@@ -6,10 +6,36 @@
     if ($.imageIndexer != null) {
       return;
     }
-    $.imageIndexer = function() {
-      return null;
+    $.imageIndexer = function(instanceKey) {
+      return ImageIndexer.getInstance(instanceKey);
+    };
+    $.imageIndexer._addShortcut = function(methodName) {
+      return this[methodName] = function() {
+        var ins;
+        ins = ImageIndexer.getInstance();
+        return ins[methodName].apply(ins, arguments);
+      };
+    };
+    $.imageIndexer._addShortcut('clip');
+    $.imageIndexer._addShortcut('upload');
+    $.imageIndexer._addShortcut('partition');
+    $.imageIndexer.getClass = function() {
+      return ImageIndexer;
     };
     return ImageIndexer = (function() {
+      ImageIndexer._instances = {};
+
+      ImageIndexer.getInstance = function(instanceKey) {
+        if (instanceKey == null) {
+          instanceKey = 'default';
+        }
+        if (instanceKey in this._instances) {
+          return this._instances[instanceKey];
+        } else {
+          return this._instances[instanceKey] = new ImageIndexer();
+        }
+      };
+
       function ImageIndexer() {
         this._images = {};
       }
@@ -55,6 +81,8 @@
       ImageIndexer.prototype._hasImageData = function(imageKey) {
         return this._getImage(imageKey) !== null;
       };
+
+      ImageIndexer.prototype._withinSize = function(parentSize, pos, size) {};
 
       ImageIndexer.prototype.asChip = function() {
         var imageKey, indexInfo;

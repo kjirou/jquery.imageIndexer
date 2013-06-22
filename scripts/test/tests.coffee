@@ -7,13 +7,29 @@ else
   expect = @expect
 
 
-describe('初期化', ->
-  it('$.imageIndexer が定義されている', ->
+describe('API definitions', ->
+  it('$.imageIndexer', ->
     expect($.imageIndexer).to.be.a('function')
+  )
+
+  it('Shortcuts', ->
+    expect($.imageIndexer.clip).to.be.a('function')
+    expect($.imageIndexer.upload).to.be.a('function')
+    expect($.imageIndexer.partition).to.be.a('function')
+  )
+
+  it('getClass', ->
+    ImageIndexer = $.imageIndexer.getClass()
+    expect(ImageIndexer).to.be.a('function')
   )
 )
 
-describe('画像読み込み', ->
-  it('画像を取得できる', ->
+
+describe('ImageIndexer class', ->
+  ImageIndexer = $.imageIndexer.getClass()
+
+  it('Create instance', ->
+    ins = new ImageIndexer()
+    expect(ins).to.be.a('object')
   )
 )
