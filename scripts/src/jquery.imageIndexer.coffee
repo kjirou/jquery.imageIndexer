@@ -22,6 +22,10 @@ do ($=jQuery) ->
 
   class ImageIndexer
 
+    # Common Local Rules:
+    # - "position" is declare by [top, left]
+    # - "size" is  declare by [width, height]
+
     # @TODO エラーの出し方を Coffeeを使って & モダンブラウザ限定で 洗練したい
 
     @_instances = {}
@@ -74,10 +78,10 @@ do ($=jQuery) ->
 #        };
 
       if not @_isFullSize内に収まっている()
-        null
+        null  # throw error
 
       if not @_isSizeがpartSizeで割り切れる()
-        null
+        null  # throw error
 
       @_images[imageKey] = {
       }
@@ -99,7 +103,10 @@ do ($=jQuery) ->
     _hasImageData: (imageKey) ->
       @_getImage(imageKey) isnt null
 
-    _withinSize: (parentSize, pos, size) ->
+    # Can a parent square contain a child square within itself?
+    _withinSize: (parentSize, childPos, childSize) ->
+      (parentSize[0] >= childPos[1] + childSize[0]) and
+        (parentSize[1] >= childPos[0] + childSize[1])
 
     asChip: (imageKey, indexInfo...) ->
 

@@ -33,6 +33,40 @@ describe('ImageIndexer class', ->
     ImageIndexer.cleanInstances()
   )
 
+  describe('Alone functions', ->
+    it('_withinSize', ->
+      parentSize = [50, 100]
+
+      expect(
+        ImageIndexer::_withinSize(parentSize, [0, 0], [50, 100])
+      ).to.be.ok()
+
+      expect(
+        ImageIndexer::_withinSize(parentSize, [0, 0], [51, 100])
+      ).to.not.be.ok()
+
+      expect(
+        ImageIndexer::_withinSize(parentSize, [0, 0], [50, 101])
+      ).to.not.be.ok()
+
+      expect(
+        ImageIndexer::_withinSize(parentSize, [1, 0], [50, 99])
+      ).to.be.ok()
+
+      expect(
+        ImageIndexer::_withinSize(parentSize, [0, 1], [49, 100])
+      ).to.be.ok()
+
+      expect(
+        ImageIndexer::_withinSize(parentSize, [2, 0], [50, 99])
+      ).to.not.be.ok()
+
+      expect(
+        ImageIndexer::_withinSize(parentSize, [0, 2], [49, 100])
+      ).to.not.be.ok()
+    )
+  )
+
   describe('Instances management', ->
     it('Create instance', ->
       ins = new ImageIndexer()

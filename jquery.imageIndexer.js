@@ -86,7 +86,9 @@
         return this._getImage(imageKey) !== null;
       };
 
-      ImageIndexer.prototype._withinSize = function(parentSize, pos, size) {};
+      ImageIndexer.prototype._withinSize = function(parentSize, childPos, childSize) {
+        return (parentSize[0] >= childPos[1] + childSize[0]) && (parentSize[1] >= childPos[0] + childSize[1]);
+      };
 
       ImageIndexer.prototype.asChip = function() {
         var imageKey, indexInfo;
