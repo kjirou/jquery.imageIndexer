@@ -1,5 +1,5 @@
 (function() {
-  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  var __slice = [].slice;
 
   (function($) {
     var ImageIndexer;
@@ -11,27 +11,59 @@
     };
     return ImageIndexer = (function() {
       function ImageIndexer() {
-        this.partition = __bind(this.partition, this);
-        this.upload = __bind(this.upload, this);
-        this.clip = __bind(this.clip, this);
         this._images = {};
       }
 
-      ImageIndexer.prototype.clip = function(key, url, fullSize, clipPos, clipSize) {};
-
-      ImageIndexer.prototype.upload = function(key, url, fullSize) {
-        return this.clip(key, url, fullSize, [0, 0], fullSize.slice());
+      ImageIndexer.prototype.clip = function(imageKey, url, fullSize, clipPos, clipSize) {
+        if (this._hasImageData(imageKey)) {
+          throw new Error("The imageKey=" + imageKey + " already exists.");
+        }
       };
 
-      ImageIndexer.prototype.partition = function(key, url, fullSize, partSize, options) {
-        var opts;
+      ImageIndexer.prototype.upload = function(imageKey, url, fullSize) {
+        return this.clip(imageKey, url, fullSize, [0, 0], fullSize.slice());
+      };
+
+      ImageIndexer.prototype.partition = function(imageKey, url, fullSize, partSize, options) {
+        var opts, pos, size;
         if (options == null) {
           options = {};
         }
-        return opts = _.extend({
-          uploadPos: [0, 0],
-          uploadSize: fullSize.slice()
+        if (this._hasImageData(imageKey)) {
+          throw new Error("The imageKey=" + imageKey + " already exists.");
+        }
+        opts = _.extend({
+          targetPos: [0, 0],
+          targetSize: fullSize.slice()
         }, options);
+        pos = opts.targetPos.slice();
+        size = opts.targetSize.slice();
+        if (!this._isFullSize内に収まっている()) {
+          null;
+        }
+        if (!this._isSizeがpartSizeで割り切れる()) {
+          null;
+        }
+        return this._images[imageKey] = {};
+      };
+
+      ImageIndexer.prototype._getImageData = function(imageKey) {
+        var _ref, _ref1;
+        return (_ref = (_ref1 = this._images) != null ? _ref1[imageKey] : void 0) != null ? _ref : null;
+      };
+
+      ImageIndexer.prototype._hasImageData = function(imageKey) {
+        return this._getImage(imageKey) !== null;
+      };
+
+      ImageIndexer.prototype.asChip = function() {
+        var imageKey, indexInfo;
+        imageKey = arguments[0], indexInfo = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      };
+
+      ImageIndexer.prototype.setAlias = function() {
+        var aliasImageKey, imageKey, indexInfo;
+        aliasImageKey = arguments[0], imageKey = arguments[1], indexInfo = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
       };
 
       return ImageIndexer;

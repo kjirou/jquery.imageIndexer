@@ -2,6 +2,8 @@ do ($=jQuery) ->
   if $.imageIndexer?
     return
 
+  # @TODO エラーの出し方を Coffeeを使って & モダンブラウザ限定で 洗練したい
+
   # @TODO 引数無しは Singleton で ImageIndexer オブジェクトを返す
   # @TODO $.imageIndexer('key') で名前付きオブジェクトを返す
   # @TODO $.imageIndexer.xxx() にショートカット登録
@@ -25,38 +27,37 @@ do ($=jQuery) ->
   #          clipSize: [width, height],
       @_images = {}
 
-    clip: (key, url, fullSize, clipPos, clipSize) =>
+    clip: (imageKey, url, fullSize, clipPos, clipSize) ->
+      if @_hasImageData(imageKey)
+        throw new Error("The imageKey=#{imageKey} already exists.")
 
-    upload: (key, url, fullSize) =>
-      @clip(key, url, fullSize, [0, 0], fullSize.slice())
+    upload: (imageKey, url, fullSize) ->
+      @clip(imageKey, url, fullSize, [0, 0], fullSize.slice())
 
-    partition: (key, url, fullSize, partSize, options={}) =>
+    partition: (imageKey, url, fullSize, partSize, options={}) ->
+      if @_hasImageData(imageKey)
+        throw new Error("The imageKey=#{imageKey} already exists.")
+
       opts = _.extend({
-        uploadPos: [0, 0]
-        uploadSize: fullSize.slice()
+        targetPos: [0, 0]
+        targetSize: fullSize.slice()
       }, options)
 
+      pos = opts.targetPos.slice()
+      size = opts.targetSize.slice()
 
-#    /**
-#     * 画像全体を一定幅で分割して索引リストとして登録する
-#     *
-#     * options.uploadPos: 分割開始位置の明示指定
-#     * options.uploadSize: 分割対象サイズ指定
-#     *
-#     * 画像実サイズがfullSizeで、uploadSizeはその中の自動分割する領域
-#     * 1画像に複数の規格の画像セットをまとめる際に必要になる
-#     */
-#    kls.prototype.upload = function(key, url, fullSize, partSize, options){
-#        var opts = options || {};
-#        var uploadPos = ('uploadPos' in opts)? opts.uploadPos: [0, 0];
-#        var uploadSize = ('uploadSize' in opts)? opts.uploadSize: fullSize.slice();
-#
-#        if (this._has(key)) {
-#            throw new Error('RPGMaterial:ImageIndexer.upload, already key=`' + key + '`');
-#        };
 #        if (uploadSize[0] % partSize[0] !== 0 || uploadSize[1] % partSize[1] !== 0) {
 #            throw new Error('RPGMaterial:ImageIndexer.upload, can\'t be devided');
 #        };
+
+      unless @_isFullSize内に収まっている()
+        null
+
+      unless @_isSizeがpartSizeで割り切れる()
+        null
+
+      @_images[imageKey] = {
+      }
 #        this._data[key] = {
 #            type: 'upload',
 #            url: url,
@@ -67,8 +68,18 @@ do ($=jQuery) ->
 #            clipPos: [0, 0],
 #            clipSize: fullSize.slice()
 #        };
-#    };
 #
+
+    _getImageData: (imageKey) ->
+      @_images?[imageKey] ? null
+
+    _hasImageData: (imageKey) ->
+      @_getImage(imageKey) isnt null
+
+    asChip: (imageKey, indexInfo...) ->
+
+    setAlias: (aliasImageKey, imageKey, indexInfo...) ->
+
 #    /** 画像の一部をくり抜いて、ひとつの索引を登録する */
 #    kls.prototype.clip = function(key, url, fullSize, clipPos, clipSize){
 #        if (this._has(key)) {
@@ -90,10 +101,6 @@ do ($=jQuery) ->
 #            clipPos: clipPos,
 #            clipSize: clipSize
 #        };
-#    };
-#
-#    kls.prototype._has = function(key){
-#        return key in this._data;
 #    };
 #
 #    /** idx num=連番指定 || arr=行,列指定 || (undefined or null)=指定無し */
