@@ -90,6 +90,10 @@
         return (parentSize[0] >= childPos[1] + childSize[0]) && (parentSize[1] >= childPos[0] + childSize[1]);
       };
 
+      ImageIndexer.prototype._isEqualDevidable = function(size, partSize) {
+        return (size[0] % partSize[0] === 0) && (size[1] % partSize[1] === 0);
+      };
+
       ImageIndexer.prototype.asChip = function() {
         var imageKey, indexInfo;
         imageKey = arguments[0], indexInfo = 2 <= arguments.length ? __slice.call(arguments, 1) : [];

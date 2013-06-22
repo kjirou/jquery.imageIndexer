@@ -73,10 +73,6 @@ do ($=jQuery) ->
       pos = opts.targetPos.slice()
       size = opts.targetSize.slice()
 
-#        if (uploadSize[0] % partSize[0] !== 0 || uploadSize[1] % partSize[1] !== 0) {
-#            throw new Error('RPGMaterial:ImageIndexer.upload, can\'t be devided');
-#        };
-
       if not @_isFullSize内に収まっている()
         null  # throw error
 
@@ -107,6 +103,10 @@ do ($=jQuery) ->
     _withinSize: (parentSize, childPos, childSize) ->
       (parentSize[0] >= childPos[1] + childSize[0]) and
         (parentSize[1] >= childPos[0] + childSize[1])
+
+    _isEqualDevidable: (size, partSize) ->
+      (size[0] % partSize[0] is 0) and
+        (size[1] % partSize[1] is 0)
 
     asChip: (imageKey, indexInfo...) ->
 

@@ -65,6 +65,30 @@ describe('ImageIndexer class', ->
         ImageIndexer::_withinSize(parentSize, [0, 2], [49, 100])
       ).to.not.be.ok()
     )
+
+    it('_isEqualDevidable', ->
+      size = [64, 96]
+
+      expect(
+        ImageIndexer::_isEqualDevidable(size, [32, 32])
+      ).to.be.ok()
+
+      expect(
+        ImageIndexer::_isEqualDevidable(size, [16, 16])
+      ).to.be.ok()
+
+      expect(
+        ImageIndexer::_isEqualDevidable(size, [64, 96])
+      ).to.be.ok()
+
+      expect(
+        ImageIndexer::_isEqualDevidable(size, [32, 33])
+      ).to.not.be.ok()
+
+      expect(
+        ImageIndexer::_isEqualDevidable(size, [33, 32])
+      ).to.not.be.ok()
+    )
   )
 
   describe('Instances management', ->
