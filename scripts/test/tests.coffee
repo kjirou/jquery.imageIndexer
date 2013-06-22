@@ -117,4 +117,16 @@ describe('ImageIndexer class', ->
       expect(s1 is s2).to.be.ok()
     )
   )
+
+  describe('"partition" method', ->
+    it('Normal actions don\'t throw error', ->
+      indexer = new ImageIndexer()
+      indexer.partition('icons', 'http://notexists.kjirou.net/icons.png',
+        [512, 512], [32, 32])
+      indexer.partition('faces', 'http://notexists.kjirou.net/faces.png',
+        [192, 384], [96, 96])
+      indexer.partition('complex', 'http://notexists.kjirou.net/complex.png',
+        [500, 1000], [24, 12], { targetPos:[200, 50], targetSize:[96, 48] })
+    )
+  )
 )

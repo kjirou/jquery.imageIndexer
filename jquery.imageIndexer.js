@@ -41,11 +41,11 @@
       };
 
       function ImageIndexer() {
-        this._images = {};
+        this._indexes = {};
       }
 
       ImageIndexer.prototype.clip = function(imageKey, url, fullSize, clipPos, clipSize) {
-        if (this._hasImageData(imageKey)) {
+        if (this._hasIndex(imageKey)) {
           throw new Error("The imageKey=" + imageKey + " already exists.");
         }
       };
@@ -59,7 +59,7 @@
         if (options == null) {
           options = {};
         }
-        if (this._hasImageData(imageKey)) {
+        if (this._hasIndex(imageKey)) {
           throw new Error("The imageKey=" + imageKey + " already exists.");
         }
         opts = _.extend({
@@ -68,22 +68,29 @@
         }, options);
         pos = opts.targetPos.slice();
         size = opts.targetSize.slice();
-        if (!this._isFullSize内に収まっている()) {
-          null;
+        if (!this._withinSize(fullSize, pos, size)) {
+          throw new Error("Pos=" + pos + ", size=" + size + " is not within " + fullSize + ".");
         }
-        if (!this._isSizeがpartSizeで割り切れる()) {
-          null;
+        if (!this._isEqualDevidable(size, partSize)) {
+          throw new Error("Size=" + size + " can't be devide equally by " + partSize + ".");
         }
-        return this._images[imageKey] = {};
+        return this._indexes[imageKey] = {
+          type: 'partition',
+          url: url,
+          fullSize: fullSize,
+          partSize: partSize,
+          targetPos: pos,
+          targetSize: size
+        };
       };
 
-      ImageIndexer.prototype._getImageData = function(imageKey) {
+      ImageIndexer.prototype._getIndex = function(imageKey) {
         var _ref, _ref1;
-        return (_ref = (_ref1 = this._images) != null ? _ref1[imageKey] : void 0) != null ? _ref : null;
+        return (_ref = (_ref1 = this._indexes) != null ? _ref1[imageKey] : void 0) != null ? _ref : null;
       };
 
-      ImageIndexer.prototype._hasImageData = function(imageKey) {
-        return this._getImage(imageKey) !== null;
+      ImageIndexer.prototype._hasIndex = function(imageKey) {
+        return this._getIndex(imageKey) !== null;
       };
 
       ImageIndexer.prototype._withinSize = function(parentSize, childPos, childSize) {

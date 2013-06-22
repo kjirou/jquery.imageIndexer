@@ -52,18 +52,18 @@ do ($=jQuery) ->
   #          // clip 時必須, upload時は自動設定
   #          clipPos: [top, left],
   #          clipSize: [width, height],
-      @_images = {}
+      @_indexes = {}
 
     clip: (imageKey, url, fullSize, clipPos, clipSize) ->
-      if @_hasImageData(imageKey)
+      if @_hasIndex(imageKey)
         throw new Error("The imageKey=#{imageKey} already exists.")
 
     upload: (imageKey, url, fullSize) ->
       @clip(imageKey, url, fullSize, [0, 0], fullSize.slice())
 
     partition: (imageKey, url, fullSize, partSize, options={}) ->
-      if @_hasImageData(imageKey)
-        throw new Error("The imageKey=#{imageKey} already exists.")
+      if @_hasIndex(imageKey)
+        throw new Error "The imageKey=#{imageKey} already exists."
 
       opts = _.extend({
         targetPos: [0, 0]
@@ -73,31 +73,25 @@ do ($=jQuery) ->
       pos = opts.targetPos.slice()
       size = opts.targetSize.slice()
 
-      if not @_isFullSize内に収まっている()
-        null  # throw error
+      if not @_withinSize fullSize, pos, size
+        throw new Error "Pos=#{pos}, size=#{size} is not within #{fullSize}."
 
-      if not @_isSizeがpartSizeで割り切れる()
-        null  # throw error
+      if not @_isEqualDevidable size, partSize
+        throw new Error "Size=#{size} can't be devide equally by #{partSize}."
 
-      @_images[imageKey] = {
-      }
-#        this._data[key] = {
-#            type: 'upload',
-#            url: url,
-#            fullSize: fullSize,
-#            partSize: partSize,
-#            uploadPos: uploadPos,
-#            uploadSize: uploadSize,
-#            clipPos: [0, 0],
-#            clipSize: fullSize.slice()
-#        };
-#
+      @_indexes[imageKey] =
+        type: 'partition'
+        url: url
+        fullSize: fullSize
+        partSize: partSize
+        targetPos: pos
+        targetSize: size
 
-    _getImageData: (imageKey) ->
-      @_images?[imageKey] ? null
+    _getIndex: (imageKey) ->
+      @_indexes?[imageKey] ? null
 
-    _hasImageData: (imageKey) ->
-      @_getImage(imageKey) isnt null
+    _hasIndex: (imageKey) ->
+      @_getIndex(imageKey) isnt null
 
     # Can a parent square contain a child square within itself?
     _withinSize: (parentSize, childPos, childSize) ->
