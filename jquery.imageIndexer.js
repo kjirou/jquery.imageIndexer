@@ -36,6 +36,10 @@
         }
       };
 
+      ImageIndexer.cleanInstances = function() {
+        return this._instances = {};
+      };
+
       function ImageIndexer() {
         this._images = {};
       }

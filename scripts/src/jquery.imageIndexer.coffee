@@ -16,7 +16,7 @@ do ($=jQuery) ->
   $.imageIndexer._addShortcut('upload')
   $.imageIndexer._addShortcut('partition')
 
-  $.imageIndexer.getClass = () ->
+  $.imageIndexer.getClass = ->
     ImageIndexer
 
 
@@ -31,6 +31,9 @@ do ($=jQuery) ->
         @_instances[instanceKey]
       else
         @_instances[instanceKey] = new ImageIndexer()
+
+    @cleanInstances = ->
+      @_instances = {}
 
     constructor: () ->
   #      '<任意のキー>': {
