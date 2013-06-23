@@ -30,6 +30,7 @@ module.exports = (grunt) ->
         test: [
           'node_modules/mocha/mocha.js'
           'node_modules/expect.js/expect.js'
+          'node_modules/sinon/lib/sinon.js'
           'test/assets/build/_test.js'
         ]
       css:
