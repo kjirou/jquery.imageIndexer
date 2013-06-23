@@ -115,14 +115,15 @@ do ($=jQuery) ->
     # Convert variable arguments to part-index.
     # *)That "part-index" is coord for partitioned image
     #   that is declared as [rowIndex(0-n), columnIndex(0-n)].
-    _argsToPartIndex: (args) ->
+    _argsToPartIndex: (args, columnCount) ->
       if args.length is 2
         return [args[0], args[1]]
       else if args.length is 1
-        if typeof args[0] is 'number'
-          return [0, args[0]]
-        else if args[0] instanceof Array
+        if args[0] instanceof Array
           return [args[0][0], args[0][1]]
+        else if typeof args[0] is 'number' and args[0] >= 1
+          seq = args[0] - 1  # 1 start(by user input) to 0 start
+          return [parseInt(seq / columnCount, 10), seq % columnCount]
       throw new Error "[#{args}] is invalid part-index."
 
     _partDataToPos: (partIndex, partSize, startPos=[0, 0]) ->
@@ -135,7 +136,8 @@ do ($=jQuery) ->
       if data.type is 'clip'
         null
       else if data.type is 'partition'
-        partIndex = @_argsToPartIndex index
+        partIndex = @_argsToPartIndex(
+          index, data.targetSize[0] / data.partSize[0])
         pos = @_partDataToPos partIndex, data.partSize, data.targetPos
         $('<div>').css(
           width: data.partSize[0]

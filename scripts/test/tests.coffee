@@ -91,12 +91,12 @@ describe('ImageIndexer class', ->
     )
 
     it('_argsToPartIndex', ->
-      pi = ImageIndexer::_argsToPartIndex([1, 2])
+      pi = ImageIndexer::_argsToPartIndex([1, 2], 10)
       expect(pi).to.eql([1, 2])
-      pi = ImageIndexer::_argsToPartIndex([[1, 2]])
+      pi = ImageIndexer::_argsToPartIndex([[1, 2]], 10)
       expect(pi).to.eql([1, 2])
-      pi = ImageIndexer::_argsToPartIndex([3])
-      expect(pi).to.eql([0, 3])
+      pi = ImageIndexer::_argsToPartIndex([22], 10)
+      expect(pi).to.eql([2, 1])
       expect(->
         ImageIndexer::_argsToPartIndex([])
       ).to.throwException((e) -> console.log e.message)
@@ -186,9 +186,9 @@ describe('ImageIndexer class', ->
       expect($book).to.be.a(jQuery)
       $('#views').append($book)
 
-      $cat = indexer.asChip('icons16', 1)
-      expect($cat).to.be.a(jQuery)
-      $('#views').append($cat)
+      $bow = indexer.asChip('icons16', 18)
+      expect($bow).to.be.a(jQuery)
+      $('#views').append($bow)
     )
   )
 )
