@@ -64,6 +64,19 @@ $icon2 = $.imageIndexer().asChip('icons', [1, 3]);
 MIT Licence
 
 
+## API References
+
+- upload
+- clip
+- partition
+- asChip
+- asData
+
+- $.imageIndexer
+- $.imageIndexer.version
+- $.imageIndexer.getClass
+
+
 ## Development
 
 ### Dependencies
@@ -88,7 +101,7 @@ $ grunt
 
 ### Testing
 
-Open [test/index.html](text/index.html).
+Open [test/index.html](test/index.html).
 
 
 ## Credits
