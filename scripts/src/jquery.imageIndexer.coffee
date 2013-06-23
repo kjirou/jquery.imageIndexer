@@ -7,15 +7,6 @@ do ($=jQuery) ->
   $.imageIndexer = (instanceKey) ->
     ImageIndexer.getInstance(instanceKey)
 
-  $.imageIndexer._addShortcut = (methodName) ->
-    @[methodName] = () ->
-      ins = ImageIndexer.getInstance()
-      ins[methodName].apply(ins, arguments)
-
-  $.imageIndexer._addShortcut('clip')
-  $.imageIndexer._addShortcut('upload')
-  $.imageIndexer._addShortcut('partition')
-
   $.imageIndexer.getClass = ->
     ImageIndexer
 
@@ -40,18 +31,6 @@ do ($=jQuery) ->
       @_instances = {}
 
     constructor: () ->
-  #      '<任意のキー>': {
-  #          type: '<upload||clip>',
-  #          url: '<URL>',
-  #          fullSize: [width, height],
-  #          // upload 時必須, clip時不要
-  #          partSize: [width, height],
-  #          // upload 時オプション, clip時は不要
-  #          uploadPos: [top, left],
-  #          uploadSize: [width, height],
-  #          // clip 時必須, upload時は自動設定
-  #          clipPos: [top, left],
-  #          clipSize: [width, height],
       @_images = {}
 
     clip: (imageKey, url, fullSize, clipPos, clipSize) ->
@@ -180,51 +159,5 @@ do ($=jQuery) ->
 #            uploadSize: null,
 #            clipPos: clipPos,
 #            clipSize: clipSize
-#        };
-#    };
-#
-#    /** idx num=連番指定 || arr=行,列指定 || (undefined or null)=指定無し */
-#    kls.prototype._get = function(key, idx){
-#        if (this._has(key) === false) {
-#            throw new Error('RPGMaterial:ImageIndexer._get, not defined key=`' + key + '`');
-#        };
-#        var dat = this._data[key];
-#        if (dat.type === 'clip' && idx !== undefined && idx !== null) {// 'clip'はidx指定不可
-#            throw new Error('RPGMaterial:ImageIndexer._get, clipped image is not selectable idx, key=`' + key + '`');
-#        };
-#        var pos, size;
-#        // 連番で指定, 1スタート
-#        // ex) 1234
-#        //     56..
-#        if (typeof idx === 'number') {
-#            var columnCount = dat.uploadSize[0] / dat.partSize[0];
-#            var rowCount = parseInt((idx - 1) / columnCount);
-#            pos = [
-#                rowCount * dat.partSize[1] + dat.uploadPos[0],
-#                ((idx - 1) % columnCount) * dat.partSize[0] + dat.uploadPos[1]
-#            ];
-#            size = dat.partSize;
-#        // [行,列] で指定
-#        // ex) [0,0][0,1][0,2] ..
-#        //     [1,0][1,0][1,2] ..
-#        } else if (idx instanceof Array) {
-#            pos = [
-#                idx[0] * dat.partSize[1] + dat.uploadPos[0],
-#                idx[1] * dat.partSize[0] + dat.uploadPos[1]
-#            ];
-#            size = dat.partSize;
-#        // 指定無し, 唯一の画像を取得, type=uplold の場合は全画像取得
-#        } else {
-#            pos = dat.clipPos;
-#            size = dat.clipSize;
-#        };
-#        if (dat.fullSize[0] < pos[1] + size[0] || dat.fullSize[1] < pos[0] + size[1]) {
-#            throw new Error('RPGMaterial:ImageIndexer._get, bad image index=`' + idx + '`');
-#        };
-#        return {
-#            url: dat.url,
-#            fullSize: dat.fullSize,
-#            clipPos: pos,
-#            clipSize: size
 #        };
 #    };

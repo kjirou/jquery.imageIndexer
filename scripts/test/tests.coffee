@@ -12,12 +12,6 @@ describe('API definitions', ->
     expect($.imageIndexer).to.be.a('function')
   )
 
-  it('Shortcuts', ->
-    expect($.imageIndexer.clip).to.be.a('function')
-    expect($.imageIndexer.upload).to.be.a('function')
-    expect($.imageIndexer.partition).to.be.a('function')
-  )
-
   it('getClass', ->
     ImageIndexer = $.imageIndexer.getClass()
     expect(ImageIndexer).to.be.a('function')
