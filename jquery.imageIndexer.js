@@ -12,7 +12,7 @@
     $.imageIndexer.getClass = function() {
       return ImageIndexer;
     };
-    $.imageIndexer.version = '0.1.2';
+    $.imageIndexer.version = '0.1.3';
     return ImageIndexer = (function() {
       ImageIndexer._instances = {};
 
