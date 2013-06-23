@@ -9,19 +9,10 @@
     $.imageIndexer = function(instanceKey) {
       return ImageIndexer.getInstance(instanceKey);
     };
-    $.imageIndexer._addShortcut = function(methodName) {
-      return this[methodName] = function() {
-        var ins;
-        ins = ImageIndexer.getInstance();
-        return ins[methodName].apply(ins, arguments);
-      };
-    };
-    $.imageIndexer._addShortcut('clip');
-    $.imageIndexer._addShortcut('upload');
-    $.imageIndexer._addShortcut('partition');
     $.imageIndexer.getClass = function() {
       return ImageIndexer;
     };
+    $.imageIndexer.version = '0.1.0';
     return ImageIndexer = (function() {
       ImageIndexer._instances = {};
 
@@ -42,12 +33,33 @@
 
       function ImageIndexer() {
         this._images = {};
+        this.withPreloading = true;
       }
 
-      ImageIndexer.prototype.clip = function(imageKey, url, fullSize, clipPos, clipSize) {
+      ImageIndexer.prototype.clip = function(imageKey, url, fullSize, clipPos, clipSize, options) {
+        var opts, _ref;
+        if (options == null) {
+          options = {};
+        }
+        opts = $.extend({
+          withPreloading: null
+        }, options);
         if (this._hasImageData(imageKey)) {
           throw new Error("The imageKey=" + imageKey + " already exists.");
         }
+        if (!this._withinSize(fullSize, clipPos, clipSize)) {
+          throw new Error("Pos=[" + clipPos + "] size=[" + clipSize + "] is not within [" + fullSize + "].");
+        }
+        if ((_ref = opts.withPreloading) != null ? _ref : this.withPreloading) {
+          this._preload(url);
+        }
+        return this._images[imageKey] = {
+          type: 'clip',
+          url: url,
+          fullSize: fullSize.slice(),
+          clipPos: clipPos.slice(),
+          clipSize: clipSize.slice()
+        };
       };
 
       ImageIndexer.prototype.upload = function(imageKey, url, fullSize) {
@@ -55,17 +67,18 @@
       };
 
       ImageIndexer.prototype.partition = function(imageKey, url, fullSize, partSize, options) {
-        var opts, pos, size;
+        var opts, pos, size, _ref;
         if (options == null) {
           options = {};
         }
+        opts = $.extend({
+          targetPos: [0, 0],
+          targetSize: fullSize.slice(),
+          withPreloading: null
+        }, options);
         if (this._hasImageData(imageKey)) {
           throw new Error("The imageKey=" + imageKey + " already exists.");
         }
-        opts = $.extend({
-          targetPos: [0, 0],
-          targetSize: fullSize.slice()
-        }, options);
         pos = opts.targetPos.slice();
         size = opts.targetSize.slice();
         if (!this._withinSize(fullSize, pos, size)) {
@@ -73,6 +86,9 @@
         }
         if (!this._isEqualDevidable(size, partSize)) {
           throw new Error("Size=[" + size + "] can't be divide equally by [" + partSize + "].");
+        }
+        if ((_ref = opts.withPreloading) != null ? _ref : this.withPreloading) {
+          this._preload(url);
         }
         return this._images[imageKey] = {
           type: 'partition',
@@ -82,12 +98,6 @@
           targetPos: pos,
           targetSize: size
         };
-      };
-
-      ImageIndexer.prototype.alias = function() {
-        var aliasImageKey, imageKey, index;
-        aliasImageKey = arguments[0], imageKey = arguments[1], index = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
-        return null;
       };
 
       ImageIndexer.prototype._getImageData = function(imageKey) {
@@ -110,7 +120,9 @@
         }).call(this);
       };
 
-      ImageIndexer.prototype._preLoad = function(imageUrl) {};
+      ImageIndexer.prototype._preload = function(imageUrl) {
+        return (new Image()).src = imageUrl;
+      };
 
       ImageIndexer.prototype._withinSize = function(parentSize, childPos, childSize) {
         return (parentSize[0] >= childPos[1] + childSize[0]) && (parentSize[1] >= childPos[0] + childSize[1]);
@@ -120,14 +132,16 @@
         return (size[0] % partSize[0] === 0) && (size[1] % partSize[1] === 0);
       };
 
-      ImageIndexer.prototype._argsToPartIndex = function(args) {
+      ImageIndexer.prototype._argsToPartIndex = function(args, columnCount) {
+        var seq;
         if (args.length === 2) {
           return [args[0], args[1]];
         } else if (args.length === 1) {
-          if (typeof args[0] === 'number') {
-            return [0, args[0]];
-          } else if (args[0] instanceof Array) {
+          if (args[0] instanceof Array) {
             return [args[0][0], args[0][1]];
+          } else if (typeof args[0] === 'number' && args[0] >= 1) {
+            seq = args[0] - 1;
+            return [parseInt(seq / columnCount, 10), seq % columnCount];
           }
         }
         throw new Error("[" + args + "] is invalid part-index.");
@@ -145,9 +159,21 @@
         imageKey = arguments[0], index = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
         data = this._getImageDataOrError(imageKey);
         if (data.type === 'clip') {
-          return null;
+          return $('<div>').css({
+            width: data.clipSize[0],
+            height: data.clipSize[1],
+            overflow: 'hidden'
+          }).append($('<img>').css({
+            display: 'block',
+            marginTop: -data.clipPos[0],
+            marginLeft: -data.clipPos[1],
+            width: data.fullSize[0],
+            height: data.fullSize[1]
+          }).attr({
+            src: data.url
+          }));
         } else if (data.type === 'partition') {
-          partIndex = this._argsToPartIndex(index);
+          partIndex = this._argsToPartIndex(index, data.targetSize[0] / data.partSize[0]);
           pos = this._partDataToPos(partIndex, data.partSize, data.targetPos);
           return $('<div>').css({
             width: data.partSize[0],
@@ -162,8 +188,6 @@
           }).attr({
             src: data.url
           }));
-        } else if (data.type === 'alias') {
-          return null;
         }
       };
 
