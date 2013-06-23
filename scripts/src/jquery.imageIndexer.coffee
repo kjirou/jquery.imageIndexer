@@ -35,7 +35,18 @@ do ($=jQuery) ->
 
     clip: (imageKey, url, fullSize, clipPos, clipSize) ->
       if @_hasImageData(imageKey)
-        throw new Error("The imageKey=#{imageKey} already exists.")
+        throw new Error "The imageKey=#{imageKey} already exists."
+
+      if not @_withinSize fullSize, clipPos, clipSize
+        throw new Error(
+          "Pos=[#{clipPos}] size=[#{clipSize}] is not within [#{fullSize}].")
+
+      @_images[imageKey] =
+        type: 'clip'
+        url: url
+        fullSize: fullSize.slice()
+        clipPos: clipPos.slice()
+        clipSize: clipSize.slice()
 
     upload: (imageKey, url, fullSize) ->
       @clip(imageKey, url, fullSize, [0, 0], fullSize.slice())
@@ -113,7 +124,21 @@ do ($=jQuery) ->
       data = @_getImageDataOrError imageKey
 
       if data.type is 'clip'
-        null
+        $('<div>').css(
+          width: data.clipSize[0]
+          height: data.clipSize[1]
+          overflow: 'hidden'
+        ).append(
+          $('<img>').css(
+            display: 'block'
+            marginTop: -data.clipPos[0]
+            marginLeft: -data.clipPos[1]
+            width: data.fullSize[0]
+            height: data.fullSize[1]
+          ).attr(
+            src: data.url
+          )
+        )
       else if data.type is 'partition'
         partIndex = @_argsToPartIndex(
           index, data.targetSize[0] / data.partSize[0])
@@ -139,25 +164,3 @@ do ($=jQuery) ->
     asData: (imageKey) ->
       @_getImageData(imageKey)
 
-#    /** 画像の一部をくり抜いて、ひとつの索引を登録する */
-#    kls.prototype.clip = function(key, url, fullSize, clipPos, clipSize){
-#        if (this._has(key)) {
-#            throw new Error('RPGMaterial:ImageIndexer.clip, already key=`' + key + '`');
-#        };
-#        if (arguments.length < 5) {// upload と間違えそう
-#            throw new Error('RPGMaterial:ImageIndexer.clip, not enough arguments=`' + arguments + '`');
-#        };
-#        if (fullSize[0] < clipPos[1] + clipSize[0] || fullSize[1] < clipPos[0] + clipSize[1]) {
-#            throw new Error('RPGMaterial:ImageIndexer.clip, too small image');
-#        };
-#        this._data[key] = {
-#            type: 'clip',
-#            url: url,
-#            fullSize: fullSize,
-#            partSize: null,
-#            uploadPos: null,
-#            uploadSize: null,
-#            clipPos: clipPos,
-#            clipSize: clipSize
-#        };
-#    };

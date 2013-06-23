@@ -130,7 +130,52 @@ describe('ImageIndexer class', ->
     )
   )
 
-  describe('"partition" method', ->
+  describe('image-key management', ->
+    it('Check duplication', ->
+      indexer = new ImageIndexer()
+      indexer.upload('foo', 'http://notexists.kjirou.net/a.png', [16, 16])
+      expect(->
+        indexer.upload('foo', 'http://notexists.kjirou.net/a.png', [16, 16])
+      ).to.throwException((e) -> console.log e.message)
+      expect(->
+        indexer.partition('foo', 'http://notexists.kjirou.net/a.png', [16, 16], [4, 4])
+      ).to.throwException((e) -> console.log e.message)
+    )
+  )
+
+  describe('A "clip" API', ->
+    it('Normal actions don\'t throw error', ->
+      indexer = new ImageIndexer()
+      indexer.clip('icons', 'http://notexists.kjirou.net/icons.png',
+        [512, 512], [96, 192], [24, 24])
+    )
+
+    it('Throw a error when clip size is not within image size', ->
+      indexer = new ImageIndexer()
+
+      indexer.clip('test', 'http://notexists.kjirou.net/a.png',
+        [100, 200], [0, 0], [100, 200]) # Not error
+
+      expect(->
+        indexer.clip('test', 'http://notexists.kjirou.net/a.png',
+          [100, 200], [0, 1], [100, 200])
+      ).to.throwException((e) -> console.log e.message)
+      expect(->
+        indexer.clip('test', 'http://notexists.kjirou.net/a.png',
+          [100, 200], [1, 0], [100, 200])
+      ).to.throwException((e) -> console.log e.message)
+      expect(->
+        indexer.clip('test', 'http://notexists.kjirou.net/a.png',
+          [200, 100], [2, 0], [199, 100])
+      ).to.throwException((e) -> console.log e.message)
+      expect(->
+        indexer.clip('test', 'http://notexists.kjirou.net/a.png',
+          [200, 100], [0, 2], [200, 99])
+      ).to.throwException((e) -> console.log e.message)
+    )
+  )
+
+  describe('A "partition" API', ->
     it('Normal actions don\'t throw error', ->
       indexer = new ImageIndexer()
       indexer.partition('icons', 'http://notexists.kjirou.net/icons.png',
@@ -166,9 +211,27 @@ describe('ImageIndexer class', ->
     )
   )
 
-  describe('"asChip" method', ->
-    it('Normal actions to partitioned image', ->
+  describe('A "asChip" API', ->
+    it('Create a chip by clipped image data', ->
       indexer = new ImageIndexer()
+
+      indexer.clip('girl', 'assets/images/sunayume.jp/my005B.png',
+        [256, 256], [0, 0], [16, 16])
+      indexer.clip('book', 'assets/images/sunayume.jp/my005B.png',
+        [256, 256], [32, 16], [16, 16])
+
+      $girl = indexer.asChip('girl')
+      expect($girl).to.be.a(jQuery)
+      $('#views').append($girl)
+
+      $book = indexer.asChip('book')
+      expect($book).to.be.a(jQuery)
+      $('#views').append($book)
+    )
+
+    it('Create a chip by partitioned image data', ->
+      indexer = new ImageIndexer()
+
       indexer.partition('icons16', 'assets/images/sunayume.jp/my005B.png',
         [256, 256], [16, 16])
 
