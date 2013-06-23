@@ -128,5 +128,29 @@ describe('ImageIndexer class', ->
       indexer.partition('complex', 'http://notexists.kjirou.net/complex.png',
         [500, 1000], [24, 12], { targetPos:[200, 50], targetSize:[96, 48] })
     )
+
+    it('Throw a error when target size is not within image size', ->
+      indexer = new ImageIndexer()
+      expect(->
+        indexer.partition('test', 'http://notexists.kjirou.net/test.png',
+          [50, 50], [10, 10], { targetPos:[26, 0], targetSize:[25, 25] })
+      ).to.throwException()
+      expect(->
+        indexer.partition('test', 'http://notexists.kjirou.net/test.png',
+          [50, 50], [10, 10], { targetPos:[0, 26], targetSize:[25, 25] })
+      ).to.throwException()
+    )
+
+    it('Throw a error when size can\'t be divided equally', ->
+      indexer = new ImageIndexer()
+      expect(->
+        indexer.partition('test', 'http://notexists.kjirou.net/test.png',
+          [50, 50], [26, 25])
+      ).to.throwException()
+      expect(->
+        indexer.partition('test', 'http://notexists.kjirou.net/test.png',
+          [50, 50], [25, 26])
+      ).to.throwException()
+    )
   )
 )

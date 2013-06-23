@@ -65,7 +65,7 @@ do ($=jQuery) ->
       if @_hasIndex(imageKey)
         throw new Error "The imageKey=#{imageKey} already exists."
 
-      opts = _.extend({
+      opts = $.extend({
         targetPos: [0, 0]
         targetSize: fullSize.slice()
       }, options)
@@ -101,6 +101,9 @@ do ($=jQuery) ->
     _isEqualDevidable: (size, partSize) ->
       (size[0] % partSize[0] is 0) and
         (size[1] % partSize[1] is 0)
+
+    # @TODO
+    _preLoad: (imageUrl) ->
 
     asChip: (imageKey, indexInfo...) ->
 
