@@ -59,11 +59,6 @@ $icon2 = $.imageIndexer().asChip('icons', [1, 3]);
 - `jQuery` >= 1.8
 
 
-## Licence
-
-MIT Licence
-
-
 ## API References
 
 - upload
@@ -71,10 +66,19 @@ MIT Licence
 - partition
 - asChip
 - asData
-
 - $.imageIndexer
 - $.imageIndexer.version
 - $.imageIndexer.getClass
+
+
+## Licence
+
+MIT Licence
+
+
+## Credits
+
+- [test/assets/images/sunayume.jp/](test/assets/images/sunayume.jp/) images are provided by [沙夢 sunayume.jp](http://sunayume.jp/)
 
 
 ## Development
@@ -102,8 +106,3 @@ $ grunt
 ### Testing
 
 Open [test/index.html](test/index.html).
-
-
-## Credits
-
-- [test/assets/images/sunayume.jp/](test/assets/images/sunayume.jp/) images are provided by [沙夢 sunayume.jp](http://sunayume.jp/)
