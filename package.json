@@ -10,6 +10,7 @@
     "grunt-contrib-clean": "*",
     "grunt-contrib-coffee": "*",
     "grunt-contrib-concat": "*",
+    "grunt-contrib-uglify": "*",
     "grunt-contrib-watch": "*",
     "mocha": "*",
     "expect.js": "*"

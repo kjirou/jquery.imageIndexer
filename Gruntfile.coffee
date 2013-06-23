@@ -3,9 +3,8 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-clean'
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-contrib-concat'
+  grunt.loadNpmTasks 'grunt-contrib-uglify'
   grunt.loadNpmTasks 'grunt-contrib-watch'
-
-  # @TODO tests を coffee/tests に置く
 
   grunt.initConfig
 
@@ -26,19 +25,15 @@ module.exports = (grunt) ->
           'test/assets/vendor/underscore-min.js'
           'test/assets/vendor/jquery-1.10.1.min.js'
         ]
-        src: [
-          'jquery.imageIndexer.js'
-        ]
+        build:
+          development: 'test/assets/build/_jquery.imageIndexer.js'
+          production: 'jquery.imageIndexer.js'
         test: [
           'node_modules/mocha/mocha.js'
           'node_modules/expect.js/expect.js'
           'test/assets/build/_test.js'
         ]
       css:
-        vendors: [
-        ]
-        src: [
-        ]
         test: [
           'node_modules/mocha/mocha.css'
         ]
@@ -46,35 +41,46 @@ module.exports = (grunt) ->
     clean: ['test/assets/build']
 
     coffee:
-      compile_and_join_src:
+      development:
+        options:
+          join: true
+          bare: false
         files:
-          'jquery.imageIndexer.js': [
+          '<%= constants.js.build.development %>': [
             '<%= constants.coffee.src %>'
           ]
           'test/assets/build/_test.js': [
             '<%= constants.coffee.test %>'
           ]
+      production:
         options:
           join: true
           bare: false
+        files:
+          '<%= constants.js.build.production %>': [
+            '<%= constants.coffee.src %>'
+          ]
 
     concat:
       options:
         separator: ';\n'
-      test_all_js:
+      development_js:
         src: [
           '<%= constants.js.vendors %>'
-          '<%= constants.js.src %>'
+          '<%= constants.js.build.development %>'
           '<%= constants.js.test %>'
         ]
         dest: 'test/assets/build/all.js'
-      test_all_css:
+      development_css:
         src: [
-          '<%= constants.css.vendors %>'
-          '<%= constants.css.src %>'
           '<%= constants.css.test %>'
         ]
         dest: 'test/assets/build/all.css'
+
+    uglify:
+      production:
+        files:
+          'jquery.imageIndexer.min.js': '<%= constants.js.build.production %>'
 
     watch:
       coffee:
@@ -82,6 +88,20 @@ module.exports = (grunt) ->
           '<%= constants.coffee.src %>'
           '<%= constants.coffee.test %>'
         ]
-        tasks: ['clean', 'coffee', 'concat']
+        tasks: [
+          'clean'
+          'coffee:development'
+          'concat:development_js'
+          'concat:development_css'
+        ]
 
-  grunt.registerTask 'default', ['clean', 'coffee', 'concat']
+  grunt.registerTask 'default', [
+    'clean'
+    'coffee:development'
+    'concat:development_js'
+    'concat:development_css'
+  ]
+  grunt.registerTask 'release', [
+    'coffee:production'
+    'uglify:production'
+  ]

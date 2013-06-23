@@ -230,6 +230,3 @@ do ($=jQuery) ->
 #        var obj = new this();
 #        return obj;
 #    };
-#
-#    return kls;
-#})();
