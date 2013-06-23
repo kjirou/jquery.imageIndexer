@@ -89,6 +89,24 @@ describe('ImageIndexer class', ->
         ImageIndexer::_isEqualDevidable(size, [33, 32])
       ).to.not.be.ok()
     )
+
+    it('_argsToPartIndex', ->
+      pi = ImageIndexer::_argsToPartIndex([1, 2])
+      expect(pi).to.eql([1, 2])
+      pi = ImageIndexer::_argsToPartIndex([[1, 2]])
+      expect(pi).to.eql([1, 2])
+      pi = ImageIndexer::_argsToPartIndex([3])
+      expect(pi).to.eql([0, 3])
+      expect(->
+        ImageIndexer::_argsToPartIndex([])
+      ).to.throwException((e) -> console.log e.message)
+    )
+
+    it('_partDataToPos', ->
+      pos = ImageIndexer::_partDataToPos([2, 3], [20, 30], [1, 2])
+      expect(pos[0]).to.be(30 * 2 + 1)
+      expect(pos[1]).to.be(20 * 3 + 2)
+    )
   )
 
   describe('Instances management', ->
@@ -134,11 +152,11 @@ describe('ImageIndexer class', ->
       expect(->
         indexer.partition('test', 'http://notexists.kjirou.net/test.png',
           [50, 50], [10, 10], { targetPos:[26, 0], targetSize:[25, 25] })
-      ).to.throwException()
+      ).to.throwException((e) -> console.log e.message)
       expect(->
         indexer.partition('test', 'http://notexists.kjirou.net/test.png',
           [50, 50], [10, 10], { targetPos:[0, 26], targetSize:[25, 25] })
-      ).to.throwException()
+      ).to.throwException((e) -> console.log e.message)
     )
 
     it('Throw a error when size can\'t be divided equally', ->
@@ -146,11 +164,31 @@ describe('ImageIndexer class', ->
       expect(->
         indexer.partition('test', 'http://notexists.kjirou.net/test.png',
           [50, 50], [26, 25])
-      ).to.throwException()
+      ).to.throwException((e) -> console.log e.message)
       expect(->
         indexer.partition('test', 'http://notexists.kjirou.net/test.png',
           [50, 50], [25, 26])
-      ).to.throwException()
+      ).to.throwException((e) -> console.log e.message)
+    )
+  )
+
+  describe('"asChip" method', ->
+    it('Normal actions to partitioned image', ->
+      indexer = new ImageIndexer()
+      indexer.partition('icons16', 'assets/images/sunayume.jp/my005B.png',
+        [256, 256], [16, 16])
+
+      $girl = indexer.asChip('icons16', 0, 0)
+      expect($girl).to.be.a(jQuery)
+      $('#views').append($girl)
+
+      $book = indexer.asChip('icons16', [2, 1])
+      expect($book).to.be.a(jQuery)
+      $('#views').append($book)
+
+      $cat = indexer.asChip('icons16', 1)
+      expect($cat).to.be.a(jQuery)
+      $('#views').append($cat)
     )
   )
 )

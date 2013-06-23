@@ -41,11 +41,11 @@
       };
 
       function ImageIndexer() {
-        this._indexes = {};
+        this._images = {};
       }
 
       ImageIndexer.prototype.clip = function(imageKey, url, fullSize, clipPos, clipSize) {
-        if (this._hasIndex(imageKey)) {
+        if (this._hasImageData(imageKey)) {
           throw new Error("The imageKey=" + imageKey + " already exists.");
         }
       };
@@ -59,22 +59,22 @@
         if (options == null) {
           options = {};
         }
-        if (this._hasIndex(imageKey)) {
+        if (this._hasImageData(imageKey)) {
           throw new Error("The imageKey=" + imageKey + " already exists.");
         }
-        opts = _.extend({
+        opts = $.extend({
           targetPos: [0, 0],
           targetSize: fullSize.slice()
         }, options);
         pos = opts.targetPos.slice();
         size = opts.targetSize.slice();
         if (!this._withinSize(fullSize, pos, size)) {
-          throw new Error("Pos=" + pos + ", size=" + size + " is not within " + fullSize + ".");
+          throw new Error("Pos=[" + pos + "] size=[" + size + "] is not within [" + fullSize + "].");
         }
         if (!this._isEqualDevidable(size, partSize)) {
-          throw new Error("Size=" + size + " can't be devide equally by " + partSize + ".");
+          throw new Error("Size=[" + size + "] can't be divide equally by [" + partSize + "].");
         }
-        return this._indexes[imageKey] = {
+        return this._images[imageKey] = {
           type: 'partition',
           url: url,
           fullSize: fullSize,
@@ -84,14 +84,33 @@
         };
       };
 
-      ImageIndexer.prototype._getIndex = function(imageKey) {
-        var _ref, _ref1;
-        return (_ref = (_ref1 = this._indexes) != null ? _ref1[imageKey] : void 0) != null ? _ref : null;
+      ImageIndexer.prototype.alias = function() {
+        var aliasImageKey, imageKey, index;
+        aliasImageKey = arguments[0], imageKey = arguments[1], index = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
+        return null;
       };
 
-      ImageIndexer.prototype._hasIndex = function(imageKey) {
-        return this._getIndex(imageKey) !== null;
+      ImageIndexer.prototype._getImageData = function(imageKey) {
+        var _ref, _ref1;
+        return (_ref = (_ref1 = this._images) != null ? _ref1[imageKey] : void 0) != null ? _ref : null;
       };
+
+      ImageIndexer.prototype._hasImageData = function(imageKey) {
+        return this._getImageData(imageKey) !== null;
+      };
+
+      ImageIndexer.prototype._getImageDataOrError = function(imageKey) {
+        var _ref;
+        return (function() {
+          if ((_ref = this._getImageData(imageKey)) != null) {
+            return _ref;
+          } else {
+            throw new Error("Not found image key=" + imageKey + ".");
+          }
+        }).call(this);
+      };
+
+      ImageIndexer.prototype._preLoad = function(imageUrl) {};
 
       ImageIndexer.prototype._withinSize = function(parentSize, childPos, childSize) {
         return (parentSize[0] >= childPos[1] + childSize[0]) && (parentSize[1] >= childPos[0] + childSize[1]);
@@ -101,14 +120,55 @@
         return (size[0] % partSize[0] === 0) && (size[1] % partSize[1] === 0);
       };
 
-      ImageIndexer.prototype.asChip = function() {
-        var imageKey, indexInfo;
-        imageKey = arguments[0], indexInfo = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      ImageIndexer.prototype._argsToPartIndex = function(args) {
+        if (args.length === 2) {
+          return [args[0], args[1]];
+        } else if (args.length === 1) {
+          if (typeof args[0] === 'number') {
+            return [0, args[0]];
+          } else if (args[0] instanceof Array) {
+            return [args[0][0], args[0][1]];
+          }
+        }
+        throw new Error("[" + args + "] is invalid part-index.");
       };
 
-      ImageIndexer.prototype.setAlias = function() {
-        var aliasImageKey, imageKey, indexInfo;
-        aliasImageKey = arguments[0], imageKey = arguments[1], indexInfo = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
+      ImageIndexer.prototype._partDataToPos = function(partIndex, partSize, startPos) {
+        if (startPos == null) {
+          startPos = [0, 0];
+        }
+        return [partSize[1] * partIndex[0] + startPos[0], partSize[0] * partIndex[1] + startPos[1]];
+      };
+
+      ImageIndexer.prototype.asChip = function() {
+        var data, imageKey, index, partIndex, pos;
+        imageKey = arguments[0], index = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+        data = this._getImageDataOrError(imageKey);
+        if (data.type === 'clip') {
+          return null;
+        } else if (data.type === 'partition') {
+          partIndex = this._argsToPartIndex(index);
+          pos = this._partDataToPos(partIndex, data.partSize, data.targetPos);
+          return $('<div>').css({
+            width: data.partSize[0],
+            height: data.partSize[1],
+            overflow: 'hidden'
+          }).append($('<img>').css({
+            display: 'block',
+            marginTop: -pos[0],
+            marginLeft: -pos[1],
+            width: data.fullSize[0],
+            height: data.fullSize[1]
+          }).attr({
+            src: data.url
+          }));
+        } else if (data.type === 'alias') {
+          return null;
+        }
+      };
+
+      ImageIndexer.prototype.asData = function(imageKey) {
+        return this._getImageData(imageKey);
       };
 
       return ImageIndexer;

@@ -52,17 +52,17 @@ do ($=jQuery) ->
   #          // clip 時必須, upload時は自動設定
   #          clipPos: [top, left],
   #          clipSize: [width, height],
-      @_indexes = {}
+      @_images = {}
 
     clip: (imageKey, url, fullSize, clipPos, clipSize) ->
-      if @_hasIndex(imageKey)
+      if @_hasImageData(imageKey)
         throw new Error("The imageKey=#{imageKey} already exists.")
 
     upload: (imageKey, url, fullSize) ->
       @clip(imageKey, url, fullSize, [0, 0], fullSize.slice())
 
     partition: (imageKey, url, fullSize, partSize, options={}) ->
-      if @_hasIndex(imageKey)
+      if @_hasImageData(imageKey)
         throw new Error "The imageKey=#{imageKey} already exists."
 
       opts = $.extend({
@@ -74,12 +74,12 @@ do ($=jQuery) ->
       size = opts.targetSize.slice()
 
       if not @_withinSize fullSize, pos, size
-        throw new Error "Pos=#{pos}, size=#{size} is not within #{fullSize}."
+        throw new Error "Pos=[#{pos}] size=[#{size}] is not within [#{fullSize}]."
 
       if not @_isEqualDevidable size, partSize
-        throw new Error "Size=#{size} can't be devide equally by #{partSize}."
+        throw new Error "Size=[#{size}] can't be divide equally by [#{partSize}]."
 
-      @_indexes[imageKey] =
+      @_images[imageKey] =
         type: 'partition'
         url: url
         fullSize: fullSize
@@ -87,11 +87,21 @@ do ($=jQuery) ->
         targetPos: pos
         targetSize: size
 
-    _getIndex: (imageKey) ->
-      @_indexes?[imageKey] ? null
+    alias: (aliasImageKey, imageKey, index...) ->
+      null
 
-    _hasIndex: (imageKey) ->
-      @_getIndex(imageKey) isnt null
+    _getImageData: (imageKey) ->
+      @_images?[imageKey] ? null
+
+    _hasImageData: (imageKey) ->
+      @_getImageData(imageKey) isnt null
+
+    _getImageDataOrError: (imageKey) ->
+      @_getImageData(imageKey) ?
+        throw new Error "Not found image key=#{imageKey}."
+
+    # @TODO
+    _preLoad: (imageUrl) ->
 
     # Can a parent square contain a child square within itself?
     _withinSize: (parentSize, childPos, childSize) ->
@@ -102,12 +112,51 @@ do ($=jQuery) ->
       (size[0] % partSize[0] is 0) and
         (size[1] % partSize[1] is 0)
 
-    # @TODO
-    _preLoad: (imageUrl) ->
+    # Convert variable arguments to part-index.
+    # *)That "part-index" is coord for partitioned image
+    #   that is declared as [rowIndex(0-n), columnIndex(0-n)].
+    _argsToPartIndex: (args) ->
+      if args.length is 2
+        return [args[0], args[1]]
+      else if args.length is 1
+        if typeof args[0] is 'number'
+          return [0, args[0]]
+        else if args[0] instanceof Array
+          return [args[0][0], args[0][1]]
+      throw new Error "[#{args}] is invalid part-index."
 
-    asChip: (imageKey, indexInfo...) ->
+    _partDataToPos: (partIndex, partSize, startPos=[0, 0]) ->
+      [partSize[1] * partIndex[0] + startPos[0],
+        partSize[0] * partIndex[1] + startPos[1]]
 
-    setAlias: (aliasImageKey, imageKey, indexInfo...) ->
+    asChip: (imageKey, index...) ->
+      data = @_getImageDataOrError imageKey
+
+      if data.type is 'clip'
+        null
+      else if data.type is 'partition'
+        partIndex = @_argsToPartIndex index
+        pos = @_partDataToPos partIndex, data.partSize, data.targetPos
+        $('<div>').css(
+          width: data.partSize[0]
+          height: data.partSize[1]
+          overflow: 'hidden'
+        ).append(
+          $('<img>').css(
+            display: 'block'
+            marginTop: -pos[0]
+            marginLeft: -pos[1]
+            width: data.fullSize[0]
+            height: data.fullSize[1]
+          ).attr(
+            src: data.url
+          )
+        )
+      else if data.type is 'alias'
+        null
+
+    asData: (imageKey) ->
+      @_getImageData(imageKey)
 
 #    /** 画像の一部をくり抜いて、ひとつの索引を登録する */
 #    kls.prototype.clip = function(key, url, fullSize, clipPos, clipSize){
@@ -176,60 +225,4 @@ do ($=jQuery) ->
 #            clipPos: pos,
 #            clipSize: size
 #        };
-#    };
-#
-#    /** データを受け取る
-#        'normal'チップならば、そのままvariationへ登録可能 */
-#    kls.prototype.get = function(key, idx){
-#        return this._get.apply(this, arguments);
-#    };
-#
-#    kls.prototype.getUrl = function(key){
-#        return this._get(key).url;
-#    };
-#
-#    kls.prototype.getUrlForBackground = function(key){
-#        return 'url(' + this._get(key).url + ')';
-#    };
-#
-#    /** データをチップ化して受け取る
-#        @param resizing arr=その[サイズ]にリサイズ, default=しない */
-#    kls.prototype.asChip = function(key, idx, resizing){
-#        var dat = this._get(key, idx);
-#        var size;
-#        if (resizing instanceof Array) {
-#            size = resizing;
-#            dat.type = 'resize';
-#        } else {
-#            size = dat.clipSize;
-#            delete dat.clipSize;
-#        };
-#        return cls.$chips.PlainChip.factory(size, null, dat);
-#    };
-#
-#    /** データを非オートタイルとして受け取る
-#        64x96規格のみ対応で、最左上の32x32をチップとして返す */
-#    kls.prototype.asTile = function(key, idx){
-#        var dat = this._get(key, idx);
-#        if (dat.clipSize[0] !== 64 || dat.clipSize[1] !== 96) {
-#            throw new Error('RPGMaterial:ImageIndexer.asTile, image size is not 64x96');
-#        };
-#        delete dat.clipSize;
-#        return cls.$chips.PlainChip.factory([32, 32], null, dat);
-#    };
-#
-#    /** データを非オートタイルとして受け取る, 64x96規格のみ対応 */
-#    kls.prototype.asAutoTile = function(key, idx){
-#        var dat = this._get(key, idx);
-#        if (dat.clipSize[0] !== 64 || dat.clipSize[1] !== 96) {
-#            throw new Error('RPGMaterial:ImageIndexer.asAutoTile, image size is not 64x96');
-#        };
-#        delete dat.clipSize;
-#        dat.type = 'auto_tiling';
-#        return cls.$chips.PlainChip.factory([32, 32], null, dat);
-#    };
-#
-#    kls.factory = function(){
-#        var obj = new this();
-#        return obj;
 #    };
