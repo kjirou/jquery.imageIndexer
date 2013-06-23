@@ -22,7 +22,6 @@ module.exports = (grunt) ->
         ]
       js:
         vendors: [
-          'test/assets/vendor/underscore-min.js'
           'test/assets/vendor/jquery-1.10.1.min.js'
         ]
         build:
