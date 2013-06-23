@@ -252,4 +252,33 @@ describe('ImageIndexer class', ->
       $('#views').append($bow)
     )
   )
+
+  describe('Options', ->
+    it('Preloading On/Off', ->
+      # Default
+      indexer = new ImageIndexer()
+      spy = sinon.spy(indexer, '_preload')
+      indexer.partition('foo', 'assets/images/sunayume.jp/my005B.png',
+        [256, 256], [16, 16])
+      indexer.clip('bar', 'assets/images/sunayume.jp/my005B.png',
+        [256, 256], [0, 0], [16, 16])
+      expect(spy.callCount).to.be(2)
+
+      # Instance option
+      indexer = new ImageIndexer()
+      spy = sinon.spy(indexer, '_preload')
+      indexer.withPreloading = false
+      indexer.partition('foo', 'assets/images/sunayume.jp/my005B.png',
+        [256, 256], [16, 16])
+      expect(spy.callCount).to.be(0)
+
+      # Function option overwrite instance option
+      indexer = new ImageIndexer()
+      spy = sinon.spy(indexer, '_preload')
+      indexer.withPreloading = false
+      indexer.partition('foo', 'assets/images/sunayume.jp/my005B.png',
+        [256, 256], [16, 16], { withPreloading:true })
+      expect(spy.callCount).to.be(1)
+    )
+  )
 )
