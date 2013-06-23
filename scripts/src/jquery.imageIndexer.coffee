@@ -10,14 +10,14 @@ do ($=jQuery) ->
   $.imageIndexer.getClass = ->
     ImageIndexer
 
+  $.imageIndexer.version = '0.1.0'
+
 
   class ImageIndexer
 
     # Common Local Rules:
     # - "position" is declare by [top, left]
     # - "size" is  declare by [width, height]
-
-    # @TODO エラーの出し方を Coffeeを使って & モダンブラウザ限定で 洗練したい
 
     @_instances = {}
 
@@ -90,9 +90,6 @@ do ($=jQuery) ->
         partSize: partSize
         targetPos: pos
         targetSize: size
-
-    alias: (aliasImageKey, imageKey, index...) ->
-      null
 
     _getImageData: (imageKey) ->
       @_images?[imageKey] ? null
@@ -172,8 +169,6 @@ do ($=jQuery) ->
             src: data.url
           )
         )
-      else if data.type is 'alias'
-        null
 
     asData: (imageKey) ->
       @_getImageData(imageKey)

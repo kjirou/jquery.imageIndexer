@@ -12,6 +12,10 @@ describe('API definitions', ->
     expect($.imageIndexer).to.be.a('function')
   )
 
+  it('version', ->
+    expect($.imageIndexer.version).to.match(/^\d+\.\d+.\d+(?:\.\d+)?$/)
+  )
+
   it('getClass', ->
     ImageIndexer = $.imageIndexer.getClass()
     expect(ImageIndexer).to.be.a('function')
@@ -253,9 +257,8 @@ describe('ImageIndexer class', ->
     )
   )
 
-  describe('Options', ->
-    it('Preloading On/Off', ->
-      # Default
+  describe('Preloading settings', ->
+    it('Default is ON', ->
       indexer = new ImageIndexer()
       spy = sinon.spy(indexer, '_preload')
       indexer.partition('foo', 'assets/images/sunayume.jp/my005B.png',
@@ -263,22 +266,42 @@ describe('ImageIndexer class', ->
       indexer.clip('bar', 'assets/images/sunayume.jp/my005B.png',
         [256, 256], [0, 0], [16, 16])
       expect(spy.callCount).to.be(2)
+    )
 
-      # Instance option
+    it('Change setting to OFF', ->
       indexer = new ImageIndexer()
       spy = sinon.spy(indexer, '_preload')
       indexer.withPreloading = false
       indexer.partition('foo', 'assets/images/sunayume.jp/my005B.png',
         [256, 256], [16, 16])
       expect(spy.callCount).to.be(0)
+    )
 
-      # Function option overwrite instance option
+    it('Each functions setting overwrite instance setting', ->
       indexer = new ImageIndexer()
       spy = sinon.spy(indexer, '_preload')
       indexer.withPreloading = false
       indexer.partition('foo', 'assets/images/sunayume.jp/my005B.png',
         [256, 256], [16, 16], { withPreloading:true })
       expect(spy.callCount).to.be(1)
+
+      indexer = new ImageIndexer()
+      spy = sinon.spy(indexer, '_preload')
+      indexer.withPreloading = false
+      indexer.clip('foo', 'assets/images/sunayume.jp/my005B.png',
+        [256, 256], [0, 0], [16, 16], { withPreloading:true })
+      expect(spy.callCount).to.be(1)
     )
+  )
+)
+
+
+describe('Scenarios', ->
+  it('Use as jQuery plugin', ->
+    $.imageIndexer().partition('icons16', 'assets/images/sunayume.jp/my005B.png',
+      [256, 256], [16, 16])
+    $paper = $.imageIndexer().asChip('icons16', 2, 3)
+    expect($paper).to.be.a(jQuery)
+    $('#views').append($paper)
   )
 )
