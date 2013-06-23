@@ -33,13 +33,23 @@ do ($=jQuery) ->
     constructor: () ->
       @_images = {}
 
-    clip: (imageKey, url, fullSize, clipPos, clipSize) ->
+      @withPreloading = true
+
+    clip: (imageKey, url, fullSize, clipPos, clipSize, options={}) ->
+      opts = $.extend({
+        # true || false || null=Use @withPreloading
+        withPreloading: null
+      }, options)
+
       if @_hasImageData(imageKey)
         throw new Error "The imageKey=#{imageKey} already exists."
 
       if not @_withinSize fullSize, clipPos, clipSize
         throw new Error(
           "Pos=[#{clipPos}] size=[#{clipSize}] is not within [#{fullSize}].")
+
+      if opts.withPreloading ? @withPreloading
+        @_preload(url)
 
       @_images[imageKey] =
         type: 'clip'
@@ -52,13 +62,14 @@ do ($=jQuery) ->
       @clip(imageKey, url, fullSize, [0, 0], fullSize.slice())
 
     partition: (imageKey, url, fullSize, partSize, options={}) ->
-      if @_hasImageData(imageKey)
-        throw new Error "The imageKey=#{imageKey} already exists."
-
       opts = $.extend({
         targetPos: [0, 0]
         targetSize: fullSize.slice()
+        withPreloading: null  # Ref "clip" method
       }, options)
+
+      if @_hasImageData(imageKey)
+        throw new Error "The imageKey=#{imageKey} already exists."
 
       pos = opts.targetPos.slice()
       size = opts.targetSize.slice()
@@ -68,6 +79,9 @@ do ($=jQuery) ->
 
       if not @_isEqualDevidable size, partSize
         throw new Error "Size=[#{size}] can't be divide equally by [#{partSize}]."
+
+      if opts.withPreloading ? @withPreloading
+        @_preload(url)
 
       @_images[imageKey] =
         type: 'partition'
@@ -90,8 +104,8 @@ do ($=jQuery) ->
       @_getImageData(imageKey) ?
         throw new Error "Not found image key=#{imageKey}."
 
-    # @TODO
-    _preLoad: (imageUrl) ->
+    _preload: (imageUrl) ->
+      (new Image()).src = imageUrl
 
     # Can a parent square contain a child square within itself?
     _withinSize: (parentSize, childPos, childSize) ->

@@ -133,6 +133,7 @@ describe('ImageIndexer class', ->
   describe('image-key management', ->
     it('Check duplication', ->
       indexer = new ImageIndexer()
+      indexer.withPreloading = false
       indexer.upload('foo', 'http://notexists.kjirou.net/a.png', [16, 16])
       expect(->
         indexer.upload('foo', 'http://notexists.kjirou.net/a.png', [16, 16])
@@ -146,12 +147,14 @@ describe('ImageIndexer class', ->
   describe('A "clip" API', ->
     it('Normal actions don\'t throw error', ->
       indexer = new ImageIndexer()
+      indexer.withPreloading = false
       indexer.clip('icons', 'http://notexists.kjirou.net/icons.png',
         [512, 512], [96, 192], [24, 24])
     )
 
     it('Throw a error when clip size is not within image size', ->
       indexer = new ImageIndexer()
+      indexer.withPreloading = false
 
       indexer.clip('test', 'http://notexists.kjirou.net/a.png',
         [100, 200], [0, 0], [100, 200]) # Not error
@@ -178,6 +181,7 @@ describe('ImageIndexer class', ->
   describe('A "partition" API', ->
     it('Normal actions don\'t throw error', ->
       indexer = new ImageIndexer()
+      indexer.withPreloading = false
       indexer.partition('icons', 'http://notexists.kjirou.net/icons.png',
         [512, 512], [32, 32])
       indexer.partition('faces', 'http://notexists.kjirou.net/faces.png',
