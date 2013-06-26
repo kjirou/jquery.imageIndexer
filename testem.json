@@ -1,0 +1,7 @@
+{
+  "framework": "mocha",
+  "src_files": [
+    "test/assets/build/all.js"
+  ],
+  "test_page": "test/index.html"
+}
