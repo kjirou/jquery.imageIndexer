@@ -87,6 +87,7 @@ MIT Licence
 
 - `node.js` >= 11.0
 - `npm install -g grunt-cli`
+- `npm install -g testem`
 
 ### Deploy
 
@@ -106,3 +107,8 @@ $ grunt
 ### Testing
 
 Open [test/index.html](test/index.html).
+
+Or:
+```
+$ testem ci -l phantomjs
+```

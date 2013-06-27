@@ -5,6 +5,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-concat'
   grunt.loadNpmTasks 'grunt-contrib-uglify'
   grunt.loadNpmTasks 'grunt-contrib-watch'
+  #grunt.loadNpmTasks 'grunt-testem'
 
   grunt.initConfig
 
@@ -94,6 +95,18 @@ module.exports = (grunt) ->
           'concat:development_js'
           'concat:development_css'
         ]
+
+    # @TODO Don't act it, ..probably grunt-testem has a bug
+    #testem:
+    #  options:
+    #    launch_in_ci: [
+    #      'phantomjs'
+    #    ]
+    #  main:
+    #    src: [
+    #      'test/index.html'
+    #    ]
+    #    dest: 'tests.tap'
 
   grunt.registerTask 'default', [
     'clean'
