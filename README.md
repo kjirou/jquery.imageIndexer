@@ -88,6 +88,7 @@ MIT Licence
 - `node.js` >= 11.0
 - `npm install -g grunt-cli`
 - `npm install -g testem`
+- `brew install phantomjs`
 
 ### Deploy
 
