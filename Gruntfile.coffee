@@ -96,7 +96,8 @@ module.exports = (grunt) ->
           'concat:development_css'
         ]
 
-    # @TODO Don't act it, ..probably grunt-testem has a bug
+    # @TODO Don't act it now
+    #       Ref) https://github.com/sideroad/grunt-testem/issues/11
     #testem:
     #  options:
     #    launch_in_ci: [
@@ -107,6 +108,25 @@ module.exports = (grunt) ->
     #      'test/index.html'
     #    ]
     #    dest: 'tests.tap'
+
+  # @TODO testem ci を実行するためのカスタムタスク
+  #       grunt-testem を使いたかったが、testem 3.00 だと動いてないっぽくて修正待ち
+  #       またこれも、exit ステータスがテスト失敗しても 0 しか返さないバグがあるらしい
+  #       Ref) https://github.com/airportyh/testem/issues/235
+  #       (-b の意味がよくわからんが、とりあえずつけてる)
+  #       とりあえずはエラーコードを使う予定が無いからこのまま
+  grunt.registerTask 'test', ->
+    done = @async()
+    cmd = 'testem ci -b -l phantomjs'
+    opts = timeout: 60000
+    callback = (error, stdout, stderr) ->
+      if not error
+        console.log stdout
+        done()
+      else
+        console.log 'ERR', error, stderr
+        done(false)
+    require('child_process').exec(cmd, opts, callback)
 
   grunt.registerTask 'default', [
     'clean'
