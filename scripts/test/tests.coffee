@@ -110,7 +110,7 @@ describe('ImageIndexer class', ->
   describe('Instances management', ->
     it('Create instance', ->
       ins = new ImageIndexer()
-      expect(ins).to.be.a('object')
+      expect(ins).to.be.a(ImageIndexer)
     )
 
     it('Create instance by getInstance', ->
