@@ -16,8 +16,8 @@ do ($=jQuery) ->
   class ImageIndexer
 
     # Common Local Rules:
-    # - "position" is declare by [top, left]
-    # - "size" is  declare by [width, height]
+    # - A "position" is declared as [top, left].
+    # - A "size" is declared as [width, height].
 
     @_instances = {}
 
@@ -131,7 +131,7 @@ do ($=jQuery) ->
       [partSize[1] * partIndex[0] + startPos[0],
         partSize[0] * partIndex[1] + startPos[1]]
 
-    asChip: (imageKey, index...) ->
+    asChip: (imageKey, argsForPartIndex...) ->
       data = @_getImageDataOrError imageKey
 
       if data.type is 'clip'
@@ -152,7 +152,7 @@ do ($=jQuery) ->
         )
       else if data.type is 'partition'
         partIndex = @_argsToPartIndex(
-          index, data.targetSize[0] / data.partSize[0])
+          argsForPartIndex, data.targetSize[0] / data.partSize[0])
         pos = @_partDataToPos partIndex, data.partSize, data.targetPos
         $('<div>').css(
           width: data.partSize[0]

@@ -95,7 +95,7 @@ module.exports = (grunt) ->
         tasks: [
           'clean'
           'coffee:development'
-          'concat:development_js'
+          'concat:development_js:0'
           'concat:development_css'
         ]
 
