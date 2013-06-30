@@ -22,8 +22,10 @@ module.exports = (grunt) ->
           'scripts/test/run.coffee'
         ]
       js:
-        vendors: [
+        jqueries: [
           'test/assets/vendor/jquery-1.10.1.min.js'
+          'test/assets/vendor/jquery-1.9.1.min.js'
+          'test/assets/vendor/jquery-1.8.3.min.js'
         ]
         build:
           development: 'test/assets/build/_jquery.imageIndexer.js'
@@ -65,9 +67,10 @@ module.exports = (grunt) ->
     concat:
       options:
         separator: ';\n'
+      # "concat:development_js:0" uses "constants.js.jqueries[0]"
       development_js:
         src: [
-          '<%= constants.js.vendors %>'
+          '<%= constants.js.jqueries[grunt.task.current.args[0]] %>'
           '<%= constants.js.build.development %>'
           '<%= constants.js.test %>'
         ]
@@ -106,13 +109,15 @@ module.exports = (grunt) ->
           'test/index.html'
         ]
         dest: 'log/tests.tap'
+      # Waring: Chrome can't finish tests occasionally.
+      # Ref) https://github.com/airportyh/testem/issues/240
       all_launchers:
         options: {
           launch_in_ci: [
             'phantomjs'
-            'chrome'
             'firefox'
             'safari'
+            'chrome'
           ]
         }
         src: [
@@ -139,14 +144,43 @@ module.exports = (grunt) ->
   #      done(false)
   #  require('child_process').exec(cmd, opts, callback)
 
-  grunt.registerTask 'default', [
+  grunt.registerTask 'build', [
     'clean'
     'coffee:development'
-    'concat:development_js'
+    'concat:development_js:0'
     'concat:development_css'
+  ]
+
+  # @TODO "build:jquery*" settings are verbose
+  grunt.registerTask 'build:jquery19', [
+    'clean'
+    'coffee:development'
+    'concat:development_js:1'
+    'concat:development_css'
+  ]
+
+  grunt.registerTask 'build:jquery18', [
+    'clean'
+    'coffee:development'
+    'concat:development_js:2'
+    'concat:development_css'
+  ]
+
+  # @TODO tests.tap is overwrited by each test
+  grunt.registerTask 'testall', [
+    'build'
+    'testem:all_launchers'
+    'build:jquery19'
+    'testem:all_launchers'
+    'build:jquery18'
+    'testem:all_launchers'
   ]
 
   grunt.registerTask 'release', [
     'coffee:production'
     'uglify:production'
   ]
+
+  # Aliases
+  grunt.registerTask 'default', ['build']
+  grunt.registerTask 'test', ['testem:main']
