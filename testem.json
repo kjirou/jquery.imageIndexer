@@ -1,5 +1,11 @@
 {
   "framework": "mocha",
+  "launch_in_ci": [
+    "phantomjs",
+    "chrome",
+    "firefox",
+    "safari"
+  ],
   "launch_in_dev": [
     "phantomjs"
   ],
