@@ -5,7 +5,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-concat'
   grunt.loadNpmTasks 'grunt-contrib-uglify'
   grunt.loadNpmTasks 'grunt-contrib-watch'
-  #grunt.loadNpmTasks 'grunt-testem'
+  grunt.loadNpmTasks 'grunt-testem'
 
   grunt.initConfig
 
@@ -96,37 +96,35 @@ module.exports = (grunt) ->
           'concat:development_css'
         ]
 
-    # @TODO Don't act it now
-    #       Ref) https://github.com/sideroad/grunt-testem/issues/11
-    #testem:
-    #  options:
-    #    launch_in_ci: [
-    #      'phantomjs'
-    #    ]
-    #  main:
-    #    src: [
-    #      'test/index.html'
-    #    ]
-    #    dest: 'tests.tap'
+    testem:
+      options:
+        launch_in_ci: [
+          'phantomjs'
+        ]
+      main:
+        src: [
+          'test/index.html'
+        ]
+        dest: 'log/tests.tap'
 
   # @TODO testem ci を実行するためのカスタムタスク
-  #       grunt-testem を使いたかったが、testem 3.00 だと動いてないっぽくて修正待ち
-  #       またこれも、exit ステータスがテスト失敗しても 0 しか返さないバグがあるらしい
+  #       とりあえずは grunt-testem を使う方針にする。
+  #       なおこれは exit ステータスがテスト失敗しても 0 しか返さないバグがある
   #       Ref) https://github.com/airportyh/testem/issues/235
   #       (-b の意味がよくわからんが、とりあえずつけてる)
   #       とりあえずはエラーコードを使う予定が無いからこのまま
-  grunt.registerTask 'test', ->
-    done = @async()
-    cmd = 'testem ci -b -l phantomjs'
-    opts = timeout: 60000
-    callback = (error, stdout, stderr) ->
-      if not error
-        console.log stdout
-        done()
-      else
-        console.log 'ERR', error, stderr
-        done(false)
-    require('child_process').exec(cmd, opts, callback)
+  #grunt.registerTask 'test', ->
+  #  done = @async()
+  #  cmd = 'testem ci -b -l phantomjs'
+  #  opts = timeout: 60000
+  #  callback = (error, stdout, stderr) ->
+  #    if not error
+  #      console.log stdout
+  #      done()
+  #    else
+  #      console.log 'ERR', error, stderr
+  #      done(false)
+  #  require('child_process').exec(cmd, opts, callback)
 
   grunt.registerTask 'default', [
     'clean'
