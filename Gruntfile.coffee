@@ -106,6 +106,19 @@ module.exports = (grunt) ->
           'test/index.html'
         ]
         dest: 'log/tests.tap'
+      all_launchers:
+        options: {
+          launch_in_ci: [
+            'phantomjs'
+            'chrome'
+            'firefox'
+            'safari'
+          ]
+        }
+        src: [
+          'test/index.html'
+        ]
+        dest: 'log/tests.tap'
 
   # @TODO testem ci を実行するためのカスタムタスク
   #       とりあえずは grunt-testem を使う方針にする。
@@ -132,6 +145,7 @@ module.exports = (grunt) ->
     'concat:development_js'
     'concat:development_css'
   ]
+
   grunt.registerTask 'release', [
     'coffee:production'
     'uglify:production'
