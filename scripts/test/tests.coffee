@@ -7,7 +7,7 @@ else
   expect = @expect
 
 
-describe('API definitions', ->
+describe('API definitions ::', ->
   it('$.imageIndexer', ->
     expect($.imageIndexer).to.be.a('function')
   )
@@ -23,7 +23,7 @@ describe('API definitions', ->
 )
 
 
-describe('ImageIndexer class', ->
+describe('ImageIndexer class ::', ->
 
   ImageIndexer = $.imageIndexer.getClass()
 
@@ -31,7 +31,7 @@ describe('ImageIndexer class', ->
     ImageIndexer.cleanInstances()
   )
 
-  describe('Alone functions', ->
+  describe('Alone functions ::', ->
     it('_withinSize', ->
       parentSize = [50, 100]
 
@@ -97,7 +97,9 @@ describe('ImageIndexer class', ->
       expect(pi).to.eql([2, 1])
       expect(->
         ImageIndexer::_argsToPartIndex([])
-      ).to.throwException((e) -> console.log e.message)
+      ).to.throwException((e) ->
+        expect(e).to.be.a(ImageIndexer.InvalidArgsError)
+      )
     )
 
     it('_partDataToPos', ->
@@ -107,7 +109,29 @@ describe('ImageIndexer class', ->
     )
   )
 
-  describe('Instances management', ->
+  describe('Alone classes ::', ->
+    it('Are working custom Error classes?', ->
+      myError = new ImageIndexer.DuplicatedImageKeyError
+
+      expect(myError).to.be.a(ImageIndexer.DuplicatedImageKeyError)
+      expect(myError).to.be.a(Error)
+      expect(myError.name).to.be('DuplicatedImageKeyError')
+
+      # Can expect.js catch them?
+      expect(->
+        throw new ImageIndexer.DuplicatedImageKeyError('I am a custom error')
+      ).to.throwException(/I am a custom error/)
+      expect(->
+        throw new ImageIndexer.DuplicatedImageKeyError('I am a custom error')
+      ).to.throwException((e) ->
+        expect(e).to.be.a(ImageIndexer.DuplicatedImageKeyError)
+        expect(e).to.be.a(Error)
+        expect(e.message).to.be('I am a custom error')
+      )
+    )
+  )
+
+  describe('Instances management ::', ->
     it('Create instance', ->
       ins = new ImageIndexer()
       expect(ins).to.be.a(ImageIndexer)
@@ -134,21 +158,34 @@ describe('ImageIndexer class', ->
     )
   )
 
-  describe('image-key management', ->
+  describe('image-key management ::', ->
+    it('Not found image-key', ->
+      indexer = new ImageIndexer()
+      expect(->
+        indexer.asChip('notfoundkey')
+      ).to.throwException((e) ->
+        expect(e).to.be.a(ImageIndexer.NotFoundImageKeyError)
+      )
+    )
+
     it('Check duplication', ->
       indexer = new ImageIndexer()
       indexer.withPreloading = false
       indexer.upload('foo', 'http://notexists.kjirou.net/a.png', [16, 16])
       expect(->
         indexer.upload('foo', 'http://notexists.kjirou.net/a.png', [16, 16])
-      ).to.throwException((e) -> console.log e.message)
+      ).to.throwException((e) ->
+        expect(e).to.be.a(ImageIndexer.DuplicatedImageKeyError)
+      )
       expect(->
         indexer.partition('foo', 'http://notexists.kjirou.net/a.png', [16, 16], [4, 4])
-      ).to.throwException((e) -> console.log e.message)
+      ).to.throwException((e) ->
+        expect(e).to.be.a(ImageIndexer.DuplicatedImageKeyError)
+      )
     )
   )
 
-  describe('A "clip" API', ->
+  describe('A "clip" API ::', ->
     it('Normal actions don\'t throw error', ->
       indexer = new ImageIndexer()
       indexer.withPreloading = false
@@ -164,25 +201,33 @@ describe('ImageIndexer class', ->
         [100, 200], [0, 0], [100, 200]) # Not error
 
       expect(->
-        indexer.clip('test', 'http://notexists.kjirou.net/a.png',
+        indexer.clip('test2', 'http://notexists.kjirou.net/a.png',
           [100, 200], [0, 1], [100, 200])
-      ).to.throwException((e) -> console.log e.message)
+      ).to.throwException((e) ->
+        expect(e).to.be.a(ImageIndexer.InvalidArgsError)
+      )
       expect(->
-        indexer.clip('test', 'http://notexists.kjirou.net/a.png',
+        indexer.clip('test2', 'http://notexists.kjirou.net/a.png',
           [100, 200], [1, 0], [100, 200])
-      ).to.throwException((e) -> console.log e.message)
+      ).to.throwException((e) ->
+        expect(e).to.be.a(ImageIndexer.InvalidArgsError)
+      )
       expect(->
-        indexer.clip('test', 'http://notexists.kjirou.net/a.png',
+        indexer.clip('test2', 'http://notexists.kjirou.net/a.png',
           [200, 100], [2, 0], [199, 100])
-      ).to.throwException((e) -> console.log e.message)
+      ).to.throwException((e) ->
+        expect(e).to.be.a(ImageIndexer.InvalidArgsError)
+      )
       expect(->
-        indexer.clip('test', 'http://notexists.kjirou.net/a.png',
+        indexer.clip('test2', 'http://notexists.kjirou.net/a.png',
           [200, 100], [0, 2], [200, 99])
-      ).to.throwException((e) -> console.log e.message)
+      ).to.throwException((e) ->
+        expect(e).to.be.a(ImageIndexer.InvalidArgsError)
+      )
     )
   )
 
-  describe('A "partition" API', ->
+  describe('A "partition" API ::', ->
     it('Normal actions don\'t throw error', ->
       indexer = new ImageIndexer()
       indexer.withPreloading = false
@@ -199,11 +244,15 @@ describe('ImageIndexer class', ->
       expect(->
         indexer.partition('test', 'http://notexists.kjirou.net/test.png',
           [50, 50], [10, 10], { targetPos:[26, 0], targetSize:[25, 25] })
-      ).to.throwException((e) -> console.log e.message)
+      ).to.throwException((e) ->
+        expect(e).to.be.a(ImageIndexer.InvalidArgsError)
+      )
       expect(->
         indexer.partition('test', 'http://notexists.kjirou.net/test.png',
           [50, 50], [10, 10], { targetPos:[0, 26], targetSize:[25, 25] })
-      ).to.throwException((e) -> console.log e.message)
+      ).to.throwException((e) ->
+        expect(e).to.be.a(ImageIndexer.InvalidArgsError)
+      )
     )
 
     it('Throw a error when size can\'t be divided equally', ->
@@ -211,15 +260,19 @@ describe('ImageIndexer class', ->
       expect(->
         indexer.partition('test', 'http://notexists.kjirou.net/test.png',
           [50, 50], [26, 25])
-      ).to.throwException((e) -> console.log e.message)
+      ).to.throwException((e) ->
+        expect(e).to.be.a(ImageIndexer.InvalidArgsError)
+      )
       expect(->
         indexer.partition('test', 'http://notexists.kjirou.net/test.png',
           [50, 50], [25, 26])
-      ).to.throwException((e) -> console.log e.message)
+      ).to.throwException((e) ->
+        expect(e).to.be.a(ImageIndexer.InvalidArgsError)
+      )
     )
   )
 
-  describe('A "asChip" API', ->
+  describe('A "asChip" API ::', ->
     it('Create a chip by clipped image data', ->
       indexer = new ImageIndexer()
 
@@ -257,7 +310,7 @@ describe('ImageIndexer class', ->
     )
   )
 
-  describe('Preloading settings', ->
+  describe('Preloading settings ::', ->
     it('Default is ON', ->
       indexer = new ImageIndexer()
       spy = sinon.spy(indexer, '_preload')
@@ -296,7 +349,7 @@ describe('ImageIndexer class', ->
 )
 
 
-describe('Scenarios', ->
+describe('Scenarios ::', ->
   it('Use as jQuery plugin', ->
     $.imageIndexer().partition('icons16', 'assets/images/sunayume.jp/my005B.png',
       [256, 256], [16, 16])

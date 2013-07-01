@@ -30,6 +30,23 @@ do ($=jQuery) ->
     @cleanInstances = ->
       @_instances = {}
 
+    @InvalidArgsError = class InvalidArgsError extends Error
+      constructor: (@message) ->
+        @name = 'InvalidArgsError'
+        super
+
+    # If this class inherit InvalidArgsError,
+    #   then @name returns 'InvalidArgsError'.
+    @NotFoundImageKeyError = class NotFoundImageKeyError extends Error
+      constructor: (@message) ->
+        @name = 'NotFoundImageKeyError'
+        super
+
+    @DuplicatedImageKeyError = class DuplicatedImageKeyError extends Error
+      constructor: (@message) ->
+        @name = 'DuplicatedImageKeyError'
+        super
+
     constructor: () ->
       @_images = {}
 
@@ -42,10 +59,10 @@ do ($=jQuery) ->
       }, options)
 
       if @_hasImageData(imageKey)
-        throw new Error "The imageKey=#{imageKey} already exists."
+        throw new DuplicatedImageKeyError "The imageKey=#{imageKey} already exists."
 
       if not @_withinSize fullSize, clipPos, clipSize
-        throw new Error(
+        throw new InvalidArgsError(
           "Pos=[#{clipPos}] size=[#{clipSize}] is not within [#{fullSize}].")
 
       if opts.withPreloading ? @withPreloading
@@ -69,16 +86,16 @@ do ($=jQuery) ->
       }, options)
 
       if @_hasImageData(imageKey)
-        throw new Error "The imageKey=#{imageKey} already exists."
+        throw new DuplicatedImageKeyError "The imageKey=#{imageKey} already exists."
 
       pos = opts.targetPos.slice()
       size = opts.targetSize.slice()
 
       if not @_withinSize fullSize, pos, size
-        throw new Error "Pos=[#{pos}] size=[#{size}] is not within [#{fullSize}]."
+        throw new InvalidArgsError "Pos=[#{pos}] size=[#{size}] is not within [#{fullSize}]."
 
       if not @_isEqualDevidable size, partSize
-        throw new Error "Size=[#{size}] can't be divide equally by [#{partSize}]."
+        throw new InvalidArgsError "Size=[#{size}] can't be divide equally by [#{partSize}]."
 
       if opts.withPreloading ? @withPreloading
         @_preload(url)
@@ -99,7 +116,7 @@ do ($=jQuery) ->
 
     _getImageDataOrError: (imageKey) ->
       @_getImageData(imageKey) ?
-        throw new Error "Not found image key=#{imageKey}."
+        throw new NotFoundImageKeyError "Not found image key=#{imageKey}."
 
     _preload: (imageUrl) ->
       (new Image()).src = imageUrl
@@ -125,7 +142,7 @@ do ($=jQuery) ->
         else if typeof args[0] is 'number' and args[0] >= 1
           seq = args[0] - 1  # 1 start(by user input) to 0 start
           return [parseInt(seq / columnCount, 10), seq % columnCount]
-      throw new Error "[#{args}] is invalid part-index."
+      throw new InvalidArgsError "[#{args}] is invalid part-index."
 
     _partDataToPos: (partIndex, partSize, startPos=[0, 0]) ->
       [partSize[1] * partIndex[0] + startPos[0],
