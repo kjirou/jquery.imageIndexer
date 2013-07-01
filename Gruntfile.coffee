@@ -6,6 +6,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-uglify'
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-testem'
+  grunt.loadNpmTasks 'grunt-text-replace'
 
   grunt.initConfig
 
@@ -92,12 +93,7 @@ module.exports = (grunt) ->
           '<%= constants.coffee.src %>'
           '<%= constants.coffee.test %>'
         ]
-        tasks: [
-          'clean'
-          'coffee:development'
-          'concat:development_js:0'
-          'concat:development_css'
-        ]
+        tasks: ['build']
 
     testem:
       options:
@@ -124,6 +120,19 @@ module.exports = (grunt) ->
           'test/index.html'
         ]
         dest: 'log/tests.tap'
+
+    replace:
+      version:
+        src: [
+          'package.json'
+          'imageIndexer.jquery.json'
+          'scripts/src/jquery.imageIndexer.coffee'
+        ]
+        overwrite: true
+        replacements: [
+          from: /(['"])0\.1\.3(['"])/
+          to: '$10.1.4$2'
+        ]
 
   # @TODO testem ci を実行するためのカスタムタスク
   #       とりあえずは grunt-testem を使う方針にする。
@@ -177,6 +186,7 @@ module.exports = (grunt) ->
   ]
 
   grunt.registerTask 'release', [
+    'replace:version'
     'coffee:production'
     'uglify:production'
   ]
