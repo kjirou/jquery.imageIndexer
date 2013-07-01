@@ -1,0 +1,3 @@
+[submodule "jquery.imageIndexer"]
+	path = jquery.imageIndexer
+	url = git://github.com/kjirou/jquery.imageIndexer.git
