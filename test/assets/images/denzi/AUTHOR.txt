@@ -1,0 +1,9 @@
+Name:
+DENZI 部屋
+
+Url:
+http://www3.wind.ne.jp/DENZI/diary/
+
+License:
+creative commons 2.1 (CC by SA 表示・継承)
+http://creativecommons.org/licenses/by-sa/2.1/jp/

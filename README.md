@@ -78,6 +78,7 @@ MIT Licence
 
 ## Credits
 
+- [test/assets/images/denzi/](test/assets/images/denzi/) images are provided by [DENZI 部屋](http://www3.wind.ne.jp/DENZI/diary/)
 - [test/assets/images/sunayume.jp/](test/assets/images/sunayume.jp/) images are provided by [沙夢 sunayume.jp](http://sunayume.jp/)
 
 
