@@ -159,8 +159,9 @@ do ($=jQuery) ->
         ).append(
           $('<img>').css(
             display: 'block'
-            marginTop: -data.clipPos[0]
-            marginLeft: -data.clipPos[1]
+            position: 'relative'
+            top: -data.clipPos[0]
+            left: -data.clipPos[1]
             width: data.fullSize[0]
             height: data.fullSize[1]
           ).attr(
@@ -178,8 +179,9 @@ do ($=jQuery) ->
         ).append(
           $('<img>').css(
             display: 'block'
-            marginTop: -pos[0]
-            marginLeft: -pos[1]
+            position: 'relative'
+            top: -pos[0]
+            left: -pos[1]
             width: data.fullSize[0]
             height: data.fullSize[1]
           ).attr(
