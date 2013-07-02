@@ -130,8 +130,8 @@ module.exports = (grunt) ->
         ]
         overwrite: true
         replacements: [
-          from: /(['"])0\.1\.3(['"])/
-          to: '$10.1.4$2'
+          from: /(['"])0\.1\.4(['"])/
+          to: '$10.1.5$2'
         ]
 
   # @TODO testem ci を実行するためのカスタムタスク

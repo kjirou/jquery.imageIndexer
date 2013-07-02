@@ -14,7 +14,7 @@
     $.imageIndexer.getClass = function() {
       return ImageIndexer;
     };
-    $.imageIndexer.version = '0.1.4';
+    $.imageIndexer.version = '0.1.5';
     return ImageIndexer = (function() {
       var DuplicatedImageKeyError, InvalidArgsError, NotFoundImageKeyError;
 
@@ -208,8 +208,9 @@
             overflow: 'hidden'
           }).append($('<img>').css({
             display: 'block',
-            marginTop: -data.clipPos[0],
-            marginLeft: -data.clipPos[1],
+            position: 'relative',
+            top: -data.clipPos[0],
+            left: -data.clipPos[1],
             width: data.fullSize[0],
             height: data.fullSize[1]
           }).attr({
@@ -224,8 +225,9 @@
             overflow: 'hidden'
           }).append($('<img>').css({
             display: 'block',
-            marginTop: -pos[0],
-            marginLeft: -pos[1],
+            position: 'relative',
+            top: -pos[0],
+            left: -pos[1],
             width: data.fullSize[0],
             height: data.fullSize[1]
           }).attr({
