@@ -7,6 +7,8 @@
     <meta name="description" content="Jquery.imageindexer : A jQuery plugin for supporting image management." />
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+    <script type="text/javascript" src="jquery.imageIndexer/test/assets/vendor/jquery-1.10.1.min.js"></script>
+    <script type="text/javascript"  src="jquery.imageIndexer/jquery.imageIndexer.min.js"></script>
 
     <title>Jquery.imageindexer</title>
   </head>
@@ -88,28 +90,43 @@
 <h3>
 <a name="example-1" class="anchor" href="#example-1"><span class="octicon octicon-link"></span></a>Example 1. Clip a part of image.</h3>
 
-<p>こちらの画像をお借りして、使い方の例を</p>
+<p>例えば、あなたは以下の 512x400 画像の中で、右上の 32x32 キャラのひとりを使いたいとします。</p>
 
 <img src="images/denzi/Denzi091025-5.PNG" style="width:512px; height:400px;">
 <p>(&quot;Denzi091025-5.PNG&quot; was created by <a href="http://www3.wind.ne.jp/DENZI/diary/" target="_blank">Denzi</a>
   under license from <a href="http://creativecommons.org/licenses/by-sa/2.1/jp/" target="_blank">CC BY-SA 2.1 JP</a>.)</p>
 
+<p>その場合は、このように書くことで、一体のみを切り出すことができます。
+  </p>
+<div><span id="black_dressed_girl_container"></span></div>
+
+<pre><code>$.imageIndexer().clip(
+  'black_dressed_girl',  // Free image-key for management
+  '/path/to/image.png',  // Image path or URL
+  [512, 400],            // Real image size [width, height]
+  [32, 256],             // Clip start position [top, left]
+  [32, 32]               // Clip size [width, height]
+);
+
+// Create as a jQuery object.
+var $blackDressedGirl = $.imageIndexer().asChip('black_dressed_girl');
+</code></pre>
+<script type="text/javascript">
+$(function(){
+  $.imageIndexer().clip(
+    'black_dressed_girl',
+    'images/denzi/Denzi091025-5.PNG',
+    [512, 400],
+    [32, 256],
+    [32, 32]
+  );
+  $.imageIndexer().asChip('black_dressed_girl').appendTo('#black_dressed_girl_container');
+});
+</script>
+
 
 <h3>
 <a name="example-2" class="anchor" href="#example-2"><span class="octicon octicon-link"></span></a>Example 2. Partition a image.</h3>
-
-
-<h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
-
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
-
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
-
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
 
 
 <h3>
