@@ -1,5 +1,7 @@
 (function() {
-  var __slice = [].slice;
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    __slice = [].slice;
 
   (function($) {
     var ImageIndexer;
@@ -12,8 +14,10 @@
     $.imageIndexer.getClass = function() {
       return ImageIndexer;
     };
-    $.imageIndexer.version = '0.1.3';
+    $.imageIndexer.version = '0.1.4';
     return ImageIndexer = (function() {
+      var DuplicatedImageKeyError, InvalidArgsError, NotFoundImageKeyError;
+
       ImageIndexer._instances = {};
 
       ImageIndexer.getInstance = function(instanceKey) {
@@ -31,6 +35,45 @@
         return this._instances = {};
       };
 
+      ImageIndexer.InvalidArgsError = InvalidArgsError = (function(_super) {
+        __extends(InvalidArgsError, _super);
+
+        function InvalidArgsError(message) {
+          this.message = message;
+          this.name = 'InvalidArgsError';
+          InvalidArgsError.__super__.constructor.apply(this, arguments);
+        }
+
+        return InvalidArgsError;
+
+      })(Error);
+
+      ImageIndexer.NotFoundImageKeyError = NotFoundImageKeyError = (function(_super) {
+        __extends(NotFoundImageKeyError, _super);
+
+        function NotFoundImageKeyError(message) {
+          this.message = message;
+          this.name = 'NotFoundImageKeyError';
+          NotFoundImageKeyError.__super__.constructor.apply(this, arguments);
+        }
+
+        return NotFoundImageKeyError;
+
+      })(Error);
+
+      ImageIndexer.DuplicatedImageKeyError = DuplicatedImageKeyError = (function(_super) {
+        __extends(DuplicatedImageKeyError, _super);
+
+        function DuplicatedImageKeyError(message) {
+          this.message = message;
+          this.name = 'DuplicatedImageKeyError';
+          DuplicatedImageKeyError.__super__.constructor.apply(this, arguments);
+        }
+
+        return DuplicatedImageKeyError;
+
+      })(Error);
+
       function ImageIndexer() {
         this._images = {};
         this.withPreloading = true;
@@ -45,10 +88,10 @@
           withPreloading: null
         }, options);
         if (this._hasImageData(imageKey)) {
-          throw new Error("The imageKey=" + imageKey + " already exists.");
+          throw new DuplicatedImageKeyError("The imageKey=" + imageKey + " already exists.");
         }
         if (!this._withinSize(fullSize, clipPos, clipSize)) {
-          throw new Error("Pos=[" + clipPos + "] size=[" + clipSize + "] is not within [" + fullSize + "].");
+          throw new InvalidArgsError("Pos=[" + clipPos + "] size=[" + clipSize + "] is not within [" + fullSize + "].");
         }
         if ((_ref = opts.withPreloading) != null ? _ref : this.withPreloading) {
           this._preload(url);
@@ -77,15 +120,15 @@
           withPreloading: null
         }, options);
         if (this._hasImageData(imageKey)) {
-          throw new Error("The imageKey=" + imageKey + " already exists.");
+          throw new DuplicatedImageKeyError("The imageKey=" + imageKey + " already exists.");
         }
         pos = opts.targetPos.slice();
         size = opts.targetSize.slice();
         if (!this._withinSize(fullSize, pos, size)) {
-          throw new Error("Pos=[" + pos + "] size=[" + size + "] is not within [" + fullSize + "].");
+          throw new InvalidArgsError("Pos=[" + pos + "] size=[" + size + "] is not within [" + fullSize + "].");
         }
         if (!this._isEqualDevidable(size, partSize)) {
-          throw new Error("Size=[" + size + "] can't be divide equally by [" + partSize + "].");
+          throw new InvalidArgsError("Size=[" + size + "] can't be divide equally by [" + partSize + "].");
         }
         if ((_ref = opts.withPreloading) != null ? _ref : this.withPreloading) {
           this._preload(url);
@@ -115,7 +158,7 @@
           if ((_ref = this._getImageData(imageKey)) != null) {
             return _ref;
           } else {
-            throw new Error("Not found image key=" + imageKey + ".");
+            throw new NotFoundImageKeyError("Not found image key=" + imageKey + ".");
           }
         }).call(this);
       };
@@ -144,7 +187,7 @@
             return [parseInt(seq / columnCount, 10), seq % columnCount];
           }
         }
-        throw new Error("[" + args + "] is invalid part-index.");
+        throw new InvalidArgsError("[" + args + "] is invalid part-index.");
       };
 
       ImageIndexer.prototype._partDataToPos = function(partIndex, partSize, startPos) {
@@ -155,8 +198,8 @@
       };
 
       ImageIndexer.prototype.asChip = function() {
-        var data, imageKey, index, partIndex, pos;
-        imageKey = arguments[0], index = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+        var argsForPartIndex, data, imageKey, partIndex, pos;
+        imageKey = arguments[0], argsForPartIndex = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
         data = this._getImageDataOrError(imageKey);
         if (data.type === 'clip') {
           return $('<div>').css({
@@ -173,7 +216,7 @@
             src: data.url
           }));
         } else if (data.type === 'partition') {
-          partIndex = this._argsToPartIndex(index, data.targetSize[0] / data.partSize[0]);
+          partIndex = this._argsToPartIndex(argsForPartIndex, data.targetSize[0] / data.partSize[0]);
           pos = this._partDataToPos(partIndex, data.partSize, data.targetPos);
           return $('<div>').css({
             width: data.partSize[0],

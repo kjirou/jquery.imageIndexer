@@ -10,7 +10,7 @@ do ($=jQuery) ->
   $.imageIndexer.getClass = ->
     ImageIndexer
 
-  $.imageIndexer.version = '0.1.3'
+  $.imageIndexer.version = '0.1.4'
 
 
   class ImageIndexer
