@@ -4,13 +4,13 @@
   <head>
     <meta charset='utf-8' />
     <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Jquery.imageindexer : A jQuery plugin for supporting image management." />
+    <meta name="description" content="Jquery.imageIndexer : A jQuery plugin for supporting image management." />
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
     <script type="text/javascript" src="jquery.imageIndexer/test/assets/vendor/jquery-1.10.1.min.js"></script>
     <script type="text/javascript"  src="jquery.imageIndexer/jquery.imageIndexer.js"></script>
 
-    <title>Jquery.imageindexer</title>
+    <title>Jquery.imageIndexer</title>
   </head>
 
   <body>
@@ -20,7 +20,7 @@
         <header class="inner">
           <a id="forkme_banner" href="https://github.com/kjirou/jquery.imageIndexer">View on GitHub</a>
 
-          <h1 id="project_title">Jquery.imageindexer</h1>
+          <h1 id="project_title">Jquery.imageIndexer</h1>
           <h2 id="project_tagline">A jQuery plugin for supporting image management.</h2>
 
             <section id="downloads">
@@ -85,6 +85,12 @@
   <li>Safari</li>
   <li>Mobile Safari</li>
 </ul>
+
+
+<h3>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h3>
+
+<p><a href="http://creativecommons.org/publicdomain/zero/1.0/" target="_blank">Public Domain</a></p>
 
 
 <h3>
@@ -204,11 +210,89 @@ $(function(){
 <h3>
 <a name="api-references" class="anchor" href="#api-references"><span class="octicon octicon-link"></span></a>API References</h3>
 
+<h4>ImageIndexer Instances Management</h4>
+<p><code>$.imageIndexer()</code> を実行すると、
+  内部に定義されている <code>ImageIndexer</code> インスタンスを生成して返します。</p>
+<p>再び <code>$.imageIndexer()</code> を実行した場合は、 Singleton Pattern で同じインスタンスを返します。
+  ほとんどの場合はこれを実行するだけで充分でしょう。</p>
+<p>しかし、もし違うインスタンスを作りたい場合は、<code>$.imageIndexer('key')</code> を実行することで、
+  キーを付与して別のインスタンスを生成し、管理することができます。</p>
+
+<h4>ImageIndexer Instance APIs</h4>
+<dl>
+  <dt>clip(imageKey, url, realSize, clipPos, clipSize, options={})</dt>
+  <dd>
+    引数に関しては Example に説明があるので省略します。
+    <code>options</code> には <code>withPreloading</code> のみを設定できます。
+    この説明は Preload の項目にて解説します。
+  </dd>
+
+  <dt>upload(imageKey, url, realSize)</dt>
+  <dd>
+    <code>clip</code> の shortcut です。画像全体を登録します。
+  </dd>
+
+  <dt>partition(imageKey, url, realSize, partSize, options={})</dt>
+  <dd>
+    Example に説明があるので省略します。
+    <code>options</code> には <code>clip</code> と同じく
+    <code>withPreloading</code> を設定することもできます。
+  </dd>
+
+  <dt>asChip(imageKey, [partIndex...])</dt>
+  <dd>
+    Example を参照して下さい。
+  </dd>
+
+  <dt>asData(imageKey)</dt>
+  <dd>
+    内部的に保持している画像のインデックスデータを返します。
+    おそらくは、画像 URL が必要な場合に使用することになるでしょう。
+  </dd>
+
+  <dt>withPreloading = true</dt>
+  <dd>
+    <code>clip</code> や <code>partition</code> などによる画像登録時に
+    Preload するかを設定します。
+    default では常に行われますが <code>false</code> を設定すれば一律停止され、
+    <code>asChip</code> などの要素生成時に load することになります。<br />
+    <code>clip</code> や <code>partition</code> の <code>options</code> にて
+    実行毎に設定することも可能です。
+  </dd>
+</dl>
+
+<h4>ImageIndexer APIs</h4>
+<p>Please read the CoffeeScript <a href="https://github.com/kjirou/jquery.imageIndexer/blob/master/scripts/src/jquery.imageIndexer.coffee" target="_blank">source code</a>, sorry.</p>
+
+<h4>$.imageIndexer APIs</h4>
+<dl>
+  <dt>$.imageIndexer()</dt>
+  <dd>上記で解説したので省略します。</dd>
+
+  <dt>version</dt>
+  <dd>バージョン番号の文字列を返します。</dd>
+
+  <dt>getClass()</dt>
+  <dd>内部のクラスである <code>ImageIndexer</code> を返します。通常必要ではありません。</dd>
+</dl>
+
+
+<h3>
+<a name="other-links" class="anchor" href="#other-links"><span class="octicon octicon-link"></span></a>Other Links</h3>
+<ul>
+  <li><a href="http://plugins.jquery.com/imageIndexer/" target="_blank">jQuery ImageIndexer | jQuery Plugin Registry</a></li>
+  <li><a href="http://blog.kjirou.net/" target="_blank">それなりブログ</a> <span>.. This is my blog!</span></li>
+</ul>
+
+
+      </div>
+    </section>
+
 
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
       <footer class="inner">
-        <p class="copyright">Jquery.imageindexer maintained by <a href="https://github.com/kjirou">kjirou</a></p>
+        <p class="copyright">Jquery.imageIndexer maintained by <a href="https://github.com/kjirou">kjirou</a></p>
         <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
