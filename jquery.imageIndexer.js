@@ -79,7 +79,7 @@
         this.withPreloading = true;
       }
 
-      ImageIndexer.prototype.clip = function(imageKey, url, fullSize, clipPos, clipSize, options) {
+      ImageIndexer.prototype.clip = function(imageKey, url, realSize, clipPos, clipSize, options) {
         var opts, _ref;
         if (options == null) {
           options = {};
@@ -90,8 +90,8 @@
         if (this._hasImageData(imageKey)) {
           throw new DuplicatedImageKeyError("The imageKey=" + imageKey + " already exists.");
         }
-        if (!this._withinSize(fullSize, clipPos, clipSize)) {
-          throw new InvalidArgsError("Pos=[" + clipPos + "] size=[" + clipSize + "] is not within [" + fullSize + "].");
+        if (!this._withinSize(realSize, clipPos, clipSize)) {
+          throw new InvalidArgsError("Pos=[" + clipPos + "] size=[" + clipSize + "] is not within [" + realSize + "].");
         }
         if ((_ref = opts.withPreloading) != null ? _ref : this.withPreloading) {
           this._preload(url);
@@ -99,24 +99,24 @@
         return this._images[imageKey] = {
           type: 'clip',
           url: url,
-          fullSize: fullSize.slice(),
+          realSize: realSize.slice(),
           clipPos: clipPos.slice(),
           clipSize: clipSize.slice()
         };
       };
 
-      ImageIndexer.prototype.upload = function(imageKey, url, fullSize) {
-        return this.clip(imageKey, url, fullSize, [0, 0], fullSize.slice());
+      ImageIndexer.prototype.upload = function(imageKey, url, realSize) {
+        return this.clip(imageKey, url, realSize, [0, 0], realSize.slice());
       };
 
-      ImageIndexer.prototype.partition = function(imageKey, url, fullSize, partSize, options) {
+      ImageIndexer.prototype.partition = function(imageKey, url, realSize, partSize, options) {
         var opts, pos, size, _ref;
         if (options == null) {
           options = {};
         }
         opts = $.extend({
           targetPos: [0, 0],
-          targetSize: fullSize.slice(),
+          targetSize: realSize.slice(),
           withPreloading: null
         }, options);
         if (this._hasImageData(imageKey)) {
@@ -124,8 +124,8 @@
         }
         pos = opts.targetPos.slice();
         size = opts.targetSize.slice();
-        if (!this._withinSize(fullSize, pos, size)) {
-          throw new InvalidArgsError("Pos=[" + pos + "] size=[" + size + "] is not within [" + fullSize + "].");
+        if (!this._withinSize(realSize, pos, size)) {
+          throw new InvalidArgsError("Pos=[" + pos + "] size=[" + size + "] is not within [" + realSize + "].");
         }
         if (!this._isEqualDevidable(size, partSize)) {
           throw new InvalidArgsError("Size=[" + size + "] can't be divide equally by [" + partSize + "].");
@@ -136,7 +136,7 @@
         return this._images[imageKey] = {
           type: 'partition',
           url: url,
-          fullSize: fullSize,
+          realSize: realSize,
           partSize: partSize,
           targetPos: pos,
           targetSize: size
@@ -203,16 +203,21 @@
         data = this._getImageDataOrError(imageKey);
         if (data.type === 'clip') {
           return $('<div>').css({
+            margin: 0,
+            padding: 0,
             width: data.clipSize[0],
             height: data.clipSize[1],
             overflow: 'hidden'
           }).append($('<img>').css({
             display: 'block',
             position: 'relative',
+            margin: 0,
+            padding: 0,
             top: -data.clipPos[0],
             left: -data.clipPos[1],
-            width: data.fullSize[0],
-            height: data.fullSize[1]
+            width: data.realSize[0],
+            height: data.realSize[1],
+            border: 'none'
           }).attr({
             src: data.url
           }));
@@ -220,16 +225,21 @@
           partIndex = this._argsToPartIndex(argsForPartIndex, data.targetSize[0] / data.partSize[0]);
           pos = this._partDataToPos(partIndex, data.partSize, data.targetPos);
           return $('<div>').css({
+            margin: 0,
+            padding: 0,
             width: data.partSize[0],
             height: data.partSize[1],
             overflow: 'hidden'
           }).append($('<img>').css({
             display: 'block',
             position: 'relative',
+            margin: 0,
+            padding: 0,
             top: -pos[0],
             left: -pos[1],
-            width: data.fullSize[0],
-            height: data.fullSize[1]
+            width: data.realSize[0],
+            height: data.realSize[1],
+            border: 'none'
           }).attr({
             src: data.url
           }));
