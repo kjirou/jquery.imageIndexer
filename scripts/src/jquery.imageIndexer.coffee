@@ -52,7 +52,7 @@ do ($=jQuery) ->
 
       @withPreloading = true
 
-    clip: (imageKey, url, fullSize, clipPos, clipSize, options={}) ->
+    clip: (imageKey, url, realSize, clipPos, clipSize, options={}) ->
       opts = $.extend({
         # true || false || null=Use @withPreloading
         withPreloading: null
@@ -61,9 +61,9 @@ do ($=jQuery) ->
       if @_hasImageData(imageKey)
         throw new DuplicatedImageKeyError "The imageKey=#{imageKey} already exists."
 
-      if not @_withinSize fullSize, clipPos, clipSize
+      if not @_withinSize realSize, clipPos, clipSize
         throw new InvalidArgsError(
-          "Pos=[#{clipPos}] size=[#{clipSize}] is not within [#{fullSize}].")
+          "Pos=[#{clipPos}] size=[#{clipSize}] is not within [#{realSize}].")
 
       if opts.withPreloading ? @withPreloading
         @_preload(url)
@@ -71,17 +71,17 @@ do ($=jQuery) ->
       @_images[imageKey] =
         type: 'clip'
         url: url
-        fullSize: fullSize.slice()
+        realSize: realSize.slice()
         clipPos: clipPos.slice()
         clipSize: clipSize.slice()
 
-    upload: (imageKey, url, fullSize) ->
-      @clip(imageKey, url, fullSize, [0, 0], fullSize.slice())
+    upload: (imageKey, url, realSize) ->
+      @clip(imageKey, url, realSize, [0, 0], realSize.slice())
 
-    partition: (imageKey, url, fullSize, partSize, options={}) ->
+    partition: (imageKey, url, realSize, partSize, options={}) ->
       opts = $.extend({
         targetPos: [0, 0]
-        targetSize: fullSize.slice()
+        targetSize: realSize.slice()
         withPreloading: null  # Ref "clip" method
       }, options)
 
@@ -91,8 +91,8 @@ do ($=jQuery) ->
       pos = opts.targetPos.slice()
       size = opts.targetSize.slice()
 
-      if not @_withinSize fullSize, pos, size
-        throw new InvalidArgsError "Pos=[#{pos}] size=[#{size}] is not within [#{fullSize}]."
+      if not @_withinSize realSize, pos, size
+        throw new InvalidArgsError "Pos=[#{pos}] size=[#{size}] is not within [#{realSize}]."
 
       if not @_isEqualDevidable size, partSize
         throw new InvalidArgsError "Size=[#{size}] can't be divide equally by [#{partSize}]."
@@ -103,7 +103,7 @@ do ($=jQuery) ->
       @_images[imageKey] =
         type: 'partition'
         url: url
-        fullSize: fullSize
+        realSize: realSize
         partSize: partSize
         targetPos: pos
         targetSize: size
@@ -162,8 +162,8 @@ do ($=jQuery) ->
             position: 'relative'
             top: -data.clipPos[0]
             left: -data.clipPos[1]
-            width: data.fullSize[0]
-            height: data.fullSize[1]
+            width: data.realSize[0]
+            height: data.realSize[1]
           ).attr(
             src: data.url
           )
@@ -182,8 +182,8 @@ do ($=jQuery) ->
             position: 'relative'
             top: -pos[0]
             left: -pos[1]
-            width: data.fullSize[0]
-            height: data.fullSize[1]
+            width: data.realSize[0]
+            height: data.realSize[1]
           ).attr(
             src: data.url
           )
