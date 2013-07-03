@@ -41,5 +41,7 @@ Now arranging ...
 
 ### Test images credits
 
-- [test/assets/images/denzi/](test/assets/images/denzi/) images are provided by [DENZI 部屋](http://www3.wind.ne.jp/DENZI/diary/)
-- [test/assets/images/sunayume.jp/](test/assets/images/sunayume.jp/) images are provided by [沙夢 sunayume.jp](http://sunayume.jp/)
+- [test/assets/images/denzi/](test/assets/images/denzi/) images are created by [DENZI 部屋](http://www3.wind.ne.jp/DENZI/diary/)
+  under license from [CC BY-SA 2.1 JP](http://creativecommons.org/licenses/by-sa/2.1/jp/).
+- [test/assets/images/sunayume.jp/](test/assets/images/sunayume.jp/) images are created by [沙夢 sunayume.jp](http://sunayume.jp/)
+  under license from [here](http://sunayume.jp/?page_id=11).
