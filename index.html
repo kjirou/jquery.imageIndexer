@@ -36,7 +36,7 @@
 
 
 <h3>
-<a name="overview" class="anchor" href="#overview"><span class="octicon octicon-link"></span></a>Overview / 概要</h3>
+<a name="overview" class="anchor" href="#overview"><span class="octicon octicon-link"></span></a>Overview</h3>
 
 <p>This jQuery plugin supports your image management.<br />
   The following will be the main functions:</p>
@@ -97,8 +97,8 @@
 <p>(&quot;Denzi091025-5.PNG&quot; was created by <a href="http://www3.wind.ne.jp/DENZI/diary/" target="_blank">Denzi</a>
   under license from <a href="http://creativecommons.org/licenses/by-sa/2.1/jp/" target="_blank">CC BY-SA 2.1 JP</a>.)</p>
 
-<p>その場合は、このように書くことで、一体のみを切り出すことができます。
-  <span id="black_dressed_girl_container"></span></p>
+<p>In this case, you can clip a one character image by the following code.</p>
+<p>その場合は、以下のように書くことで、一体のみを切り出すことができます。</p>
 
 <pre><code>$.imageIndexer().clip(
   'black_dressed_girl',  // Free image-key for management
@@ -111,6 +111,10 @@
 // Create as a jQuery object.
 var $blackDressedGirl = $.imageIndexer().asChip('black_dressed_girl');
 </code></pre>
+
+<p>Like this:</p>
+<div id="black_dressed_girl_container"></div>
+
 <script type="text/javascript">
 $(function(){
   $.imageIndexer().clip(
@@ -128,28 +132,78 @@ $(function(){
 <h3>
 <a name="example-2" class="anchor" href="#example-2"><span class="octicon octicon-link"></span></a>Example 2. Partition a image.</h3>
 
+<p>If you want to manage sorted images at even intervals, then you can use more easy method.</p>
+<p>等間隔で並んでいる画像を管理する場合は、より手軽な方法も使うことができます。</p>
+
+<pre><code>$.imageIndexer().partition(
+  'charas32',              // Free image-key for management
+  '/path/to/image.png',    // Image path or URL
+  [512, 400],              // Real image size [width, height]
+  [32, 32],                // Size of a part [width, height]
+  {
+    targetPos:  [0, 256],  // Optional target position [top, left],
+                           //   default is [0, 0]
+    targetSize: [256, 64]  // Optional target size [width, height],
+                           //   default equals Real-image-size
+  }
+);
+
+//
+// The 256x64 part of image is partitioned by 32x32 with index
+//
+// +-----+-----+-----+-----+-----+-----+-----+-----+
+// |[0,0]|[0,1]|[0,2]|[0,3]|[0,4]|[0,5]|[0,6]|[0,7]|
+// +-----+-----+-----+-----+-----+-----+-----+-----+
+// |[1,0]|[1,1]|[1,2]|[1,3]|[1,4]|[1,5]|[1,6]|[1,7]|
+// +-----+-----+-----+-----+-----+-----+-----+-----+
+//
+var $blackDressedGirl = $.imageIndexer().asChip('charas32', [1, 0]);
+
+//
+// This way equals to above [1, 1]
+//
+var $blackMage = $.imageIndexer().asChip('charas32', 1, 1);
+
+//
+// And getable by sequence
+//
+// +----+----+----+----+----+----+----+----+
+// |  1 |  2 |  3 |  4 |  5 |  6 |  7 |  8 |
+// +----+----+----+----+----+----+----+----+
+// |  9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 |
+// +----+----+----+----+----+----+----+----+
+//
+var $oneEyedWoman = $.imageIndexer().asChip('charas32', 15);
+</code></pre>
+
+<p>Like these:</p>
+<div id="charas32_container"></div>
+
+<script type="text/javascript">
+$(function(){
+  $.imageIndexer().partition(
+    'charas32',
+    'images/denzi/Denzi091025-5.PNG',
+    [512, 400],
+    [32, 32],
+    {
+      targetPos:  [0, 256],
+      targetSize: [256, 64]
+    }
+  );
+  var $blackDressedGirl = $.imageIndexer().asChip('charas32', [1, 0])
+    .appendTo('#charas32_container');
+  var $blackMage = $.imageIndexer().asChip('charas32', 1, 1)
+    .appendTo('#charas32_container');
+  var $oneEyedWoman = $.imageIndexer().asChip('charas32', 15)
+    .appendTo('#charas32_container');
+});
+</script>
+
 
 <h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+<a name="api-references" class="anchor" href="#api-references"><span class="octicon octicon-link"></span></a>API References</h3>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
-
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
-
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
-
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-      </section>
-    </div>
 
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
@@ -158,7 +212,6 @@ $(function(){
         <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
-
 
 
   </body>
