@@ -153,6 +153,8 @@ do ($=jQuery) ->
 
       if data.type is 'clip'
         $('<div>').css(
+          margin: 0
+          padding: 0
           width: data.clipSize[0]
           height: data.clipSize[1]
           overflow: 'hidden'
@@ -160,10 +162,13 @@ do ($=jQuery) ->
           $('<img>').css(
             display: 'block'
             position: 'relative'
+            margin: 0
+            padding: 0
             top: -data.clipPos[0]
             left: -data.clipPos[1]
             width: data.realSize[0]
             height: data.realSize[1]
+            border: 'none'
           ).attr(
             src: data.url
           )
@@ -173,6 +178,8 @@ do ($=jQuery) ->
           argsForPartIndex, data.targetSize[0] / data.partSize[0])
         pos = @_partDataToPos partIndex, data.partSize, data.targetPos
         $('<div>').css(
+          margin: 0
+          padding: 0
           width: data.partSize[0]
           height: data.partSize[1]
           overflow: 'hidden'
@@ -180,10 +187,13 @@ do ($=jQuery) ->
           $('<img>').css(
             display: 'block'
             position: 'relative'
+            margin: 0
+            padding: 0
             top: -pos[0]
             left: -pos[1]
             width: data.realSize[0]
             height: data.realSize[1]
+            border: 'none'
           ).attr(
             src: data.url
           )
