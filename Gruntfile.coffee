@@ -160,7 +160,6 @@ module.exports = (grunt) ->
     'concat:development_css'
   ]
 
-  # @TODO "build:jquery*" settings are verbose
   grunt.registerTask 'build:jquery19', [
     'clean'
     'coffee:development'
@@ -175,7 +174,6 @@ module.exports = (grunt) ->
     'concat:development_css'
   ]
 
-  # @TODO tests.tap is overwrited by each test
   grunt.registerTask 'testall', [
     'build'
     'testem:all_launchers'
