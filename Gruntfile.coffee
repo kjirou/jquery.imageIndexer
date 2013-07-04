@@ -124,7 +124,6 @@ module.exports = (grunt) ->
         options: {
           launch_in_ci: [
             'phantomjs'
-            'firefox'
           ]
         }
         src: [
