@@ -120,6 +120,16 @@ module.exports = (grunt) ->
           'test/index.html'
         ]
         dest: 'log/tests.tap'
+      travis:
+        options: {
+          launch_in_ci: [
+            'phantomjs'
+            'firefox'
+          ]
+        }
+        src: [
+          'test/index.html'
+        ]
 
     replace:
       version:
@@ -181,6 +191,11 @@ module.exports = (grunt) ->
     'testem:all_launchers'
     'build:jquery18'
     'testem:all_launchers'
+  ]
+
+  grunt.registerTask 'travis', [
+    'build'
+    'testem:travis'
   ]
 
   grunt.registerTask 'release', [
