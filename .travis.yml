@@ -1,11 +1,16 @@
-before_script:
-  - npm install -g grunt-cli testem
-  - npm install
-
-script:
-  - "npm test"
-
 language: node_js
 
 node_js:
   - 0.11
+
+script:
+  - "npm test"
+
+branches:
+  only:
+    - master
+    - develop
+
+before_script:
+  - npm install -g grunt-cli testem
+  - npm install
