@@ -1,5 +1,5 @@
-jquery.imageIndexer
-===================
+jQuery ImageIndexer Plugin [![Build Status](https://travis-ci.org/kjirou/jquery.imageIndexer.png)](https://travis-ci.org/kjirou/jquery.imageIndexer)
+==========================
 
 This jQuery plugin supports your image management.
 
