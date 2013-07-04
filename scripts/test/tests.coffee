@@ -356,5 +356,8 @@ describe('Scenarios ::', ->
     $paper = $.imageIndexer().asChip('icons16', 2, 3)
     expect($paper).to.be.a(jQuery)
     $('#views').append($paper)
+
+    expect($paper.width()).to.be(16)
+    expect($paper.height()).to.be(16)
   )
 )
