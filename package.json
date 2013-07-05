@@ -1,6 +1,10 @@
 {
-  "name": "jquery.imageIndexer",
-  "description": "",
+  "name": "jQuery ImageIndexer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kjirou/jquery.imageIndexer"
+  },
+  "description": "A jQuery plugin for supporting image management.",
   "version": "0.1.5",
   "author": "kjirou",
   "dependencies": {
