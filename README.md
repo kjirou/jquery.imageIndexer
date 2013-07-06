@@ -14,6 +14,7 @@ User's document is [here](http://kjirou.github.io/jquery.imageIndexer/).
 - `npm install -g grunt-cli`
 - `npm install -g testem`
 - `brew install phantomjs`
+- `gem install terminal-notifier` (for npm `growl`)
 
 ### Deploy
 
