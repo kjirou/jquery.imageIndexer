@@ -16,11 +16,13 @@
     "grunt-contrib-concat": "*",
     "grunt-contrib-uglify": "*",
     "grunt-contrib-watch": "*",
+    "grunt-notify": "*",
     "grunt-testem": "*",
     "grunt-text-replace": "*",
     "mocha": "*",
     "expect.js": "*",
-    "sinon": "*"
+    "sinon": "*",
+    "growl": "*"
   },
   "scripts": {
     "test": "grunt travis"

@@ -5,6 +5,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-concat'
   grunt.loadNpmTasks 'grunt-contrib-uglify'
   grunt.loadNpmTasks 'grunt-contrib-watch'
+  grunt.loadNpmTasks 'grunt-notify'
   grunt.loadNpmTasks 'grunt-testem'
   grunt.loadNpmTasks 'grunt-text-replace'
 

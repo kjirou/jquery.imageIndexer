@@ -32,10 +32,8 @@ $ grunt
 
 ### Testing
 
-Now arranging ...
-
 - Open [test/index.html](test/index.html)
-- Execute `testem server` and open [http://localhost:7357/](http://localhost:7357/)
+- Execute `testem` or `testem -g` and open [http://localhost:7357/](http://localhost:7357/)
 - `grunt test` is CI test by PhantomJS only.
 - `grunt testall` is CI test for all browsers and all jQuery versions, but it has bugs.
 

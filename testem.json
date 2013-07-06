@@ -6,7 +6,7 @@
     "firefox",
     "safari"
   ],
-  "launch_in_dev": [
+  "_launch_in_dev": [
     "phantomjs"
   ],
   "test_page": "test/index.html"
