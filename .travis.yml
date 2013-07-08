@@ -13,6 +13,5 @@ script:
   - grunt travis
 
 branches:
-  only:
-    - master
-    - develop
+  except:
+    - gh-pages
