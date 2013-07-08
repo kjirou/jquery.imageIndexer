@@ -10,11 +10,13 @@ User's document is [here](http://kjirou.github.io/jquery.imageIndexer/).
 
 ### Dependencies
 
-- `node.js` >= 11.0
-- `npm install -g grunt-cli`
-- `npm install -g testem`
-- `brew install phantomjs`
+- `node.js` >= `11.0`, e.g. `brew install node`
+- `PhantomJS`, e.g. `brew install phantomjs`
 - `gem install terminal-notifier` (for npm `growl`)
+
+```
+$ npm install -g grunt-cli testem
+```
 
 ### Deploy
 
