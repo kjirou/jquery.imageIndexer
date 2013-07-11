@@ -12,7 +12,6 @@ User's document is [here](http://kjirou.github.io/jquery.imageIndexer/).
 
 - `node.js` >= `11.0`, e.g. `brew install node`
 - `PhantomJS`, e.g. `brew install phantomjs`
-- `gem install terminal-notifier` (for npm `growl`)
 
 ```
 $ npm install -g grunt-cli testem
@@ -36,7 +35,7 @@ $ grunt
 ### Testing
 
 - Open [test/index.html](test/index.html)
-- Execute `testem` or `testem -g` and open [http://localhost:7357/](http://localhost:7357/)
+- Execute `testem` or `testem server`, after that, open [http://localhost:7357/](http://localhost:7357/)
 - `grunt test` is CI test by PhantomJS only.
 - `grunt testall` is CI test for all browsers and all jQuery versions, but it has bugs.
 

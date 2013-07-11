@@ -23,73 +23,68 @@ module.exports = (grunt) ->
           'scripts/test/tests.coffee'
           'scripts/test/run.coffee'
         ]
-      js:
-        jqueries: [
-          'test/assets/vendor/jquery-1.10.1.min.js'
-          'test/assets/vendor/jquery-1.9.1.min.js'
-          'test/assets/vendor/jquery-1.8.3.min.js'
-        ]
-        build:
-          development: 'test/assets/build/_jquery.imageIndexer.js'
-          production: 'jquery.imageIndexer.js'
-        test: [
-          'node_modules/mocha/mocha.js'
-          'node_modules/expect.js/expect.js'
-          'node_modules/sinon/pkg/sinon.js'
-          'test/assets/build/_test.js'
-        ]
+      jqueries: [
+        'test/assets/vendor/jquery-1.10.1.min.js'
+        'test/assets/vendor/jquery-1.9.1.min.js'
+        'test/assets/vendor/jquery-1.8.3.min.js'
+      ]
       css:
         test: [
           'node_modules/mocha/mocha.css'
         ]
+      builded:
+        js:
+          src: 'test/assets/build/src.js'
+          test: 'test/assets/build/test.js'
+          minified: 'jquery.imageIndexer.min.js'
+          notminified: 'jquery.imageIndexer.js'
+        css:
+          all: 'test/assets/build/all.css'
 
     clean: ['test/assets/build']
 
     coffee:
+      options:
+        join: true
+        bare: false
       development:
-        options:
-          join: true
-          bare: false
         files:
-          '<%= constants.js.build.development %>': [
+          '<%= constants.builded.js.src %>': [
             '<%= constants.coffee.src %>'
           ]
-          'test/assets/build/_test.js': [
+          '<%= constants.builded.js.test %>': [
             '<%= constants.coffee.test %>'
           ]
       production:
-        options:
-          join: true
-          bare: false
         files:
-          '<%= constants.js.build.production %>': [
+          '<%= constants.builded.js.notminified %>': [
             '<%= constants.coffee.src %>'
           ]
 
     concat:
-      options:
-        separator: ';\n'
-      # "concat:development_js:0" uses "constants.js.jqueries[0]"
       development_js:
+        options:
+          separator: ';\n'
         src: [
-          '<%= constants.js.jqueries[grunt.task.current.args[0]] %>'
-          '<%= constants.js.build.development %>'
-          '<%= constants.js.test %>'
+          '<%= constants.jqueries[grunt.task.current.args[0]] %>'
+          '<%= constants.builded.js.src %>'
         ]
-        dest: 'test/assets/build/all.js'
+        dest: '<%= constants.builded.js.src %>'
       development_css:
+        options:
+          separator: '\n'
         src: [
           '<%= constants.css.test %>'
         ]
-        dest: 'test/assets/build/all.css'
+        dest: '<%= constants.builded.css.all %>'
 
     uglify:
       production:
         files:
-          'jquery.imageIndexer.min.js': '<%= constants.js.build.production %>'
+          '<%= constants.builded.js.minified %>': '<%= constants.builded.js.notminified %>'
 
     watch:
-      coffee:
+      main:
         files: [
           '<%= constants.coffee.src %>'
           '<%= constants.coffee.test %>'
@@ -97,39 +92,27 @@ module.exports = (grunt) ->
         tasks: ['build']
 
     testem:
+      _src: ['test/index.html']
       options:
         launch_in_ci: [
-          'phantomjs'
+          'PhantomJS'
         ]
       main:
-        src: [
-          'test/index.html'
-        ]
+        src: '<%= testem._src %>'
         dest: 'log/tests.tap'
-      # Waring: Chrome can't finish tests occasionally.
-      # Ref) https://github.com/airportyh/testem/issues/240
-      all_launchers:
+      xb:
         options: {
           launch_in_ci: [
-            'phantomjs'
-            'firefox'
-            'safari'
-            'chrome'
+            'PhantomJS'
+            'Chrome'
+            'Firefox'
+            'Safari'
           ]
         }
-        src: [
-          'test/index.html'
-        ]
+        src: '<%= testem._src %>'
         dest: 'log/tests.tap'
       travis:
-        options: {
-          launch_in_ci: [
-            'phantomjs'
-          ]
-        }
-        src: [
-          'test/index.html'
-        ]
+        src: '<%= testem._src %>'
 
     replace:
       version:
@@ -143,25 +126,6 @@ module.exports = (grunt) ->
           from: /(['"])0\.1\.4(['"])/
           to: '$10.1.5$2'
         ]
-
-  # @TODO testem ci を実行するためのカスタムタスク
-  #       とりあえずは grunt-testem を使う方針にする。
-  #       なおこれは exit ステータスがテスト失敗しても 0 しか返さないバグがある
-  #       Ref) https://github.com/airportyh/testem/issues/235
-  #       (-b の意味がよくわからんが、とりあえずつけてる)
-  #       とりあえずはエラーコードを使う予定が無いからこのまま
-  #grunt.registerTask 'test', ->
-  #  done = @async()
-  #  cmd = 'testem ci -b -l phantomjs'
-  #  opts = timeout: 60000
-  #  callback = (error, stdout, stderr) ->
-  #    if not error
-  #      console.log stdout
-  #      done()
-  #    else
-  #      console.log 'ERR', error, stderr
-  #      done(false)
-  #  require('child_process').exec(cmd, opts, callback)
 
   grunt.registerTask 'build', [
     'clean'
@@ -184,13 +148,23 @@ module.exports = (grunt) ->
     'concat:development_css'
   ]
 
-  grunt.registerTask 'testall', [
+  grunt.registerTask 'test', [
     'build'
-    'testem:all_launchers'
+    'testem:main'
+  ]
+
+  grunt.registerTask 'test:xb', [
+    'build'
+    'testem:xb'
+  ]
+
+  grunt.registerTask 'test:xb:xjq', [
+    'build'
+    'testem:xb'
     'build:jquery19'
-    'testem:all_launchers'
+    'testem:xb'
     'build:jquery18'
-    'testem:all_launchers'
+    'testem:xb'
   ]
 
   grunt.registerTask 'travis', [
@@ -206,4 +180,4 @@ module.exports = (grunt) ->
 
   # Aliases
   grunt.registerTask 'default', ['build']
-  grunt.registerTask 'test', ['testem:main']
+  grunt.registerTask 'testall', ['test:xb:xjq']

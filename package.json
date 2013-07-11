@@ -21,7 +21,10 @@
     "grunt-text-replace": "*",
     "mocha": "*",
     "expect.js": "*",
-    "sinon": "*",
-    "growl": "*"
+    "sinon": "*"
+  },
+  "main": "jquery.imageIndexer.js",
+  "scripts": {
+    "test": "grunt test"
   }
 }
